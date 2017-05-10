@@ -1248,15 +1248,16 @@ if(isset($_REQUEST['otraoperation'])) {
 									
 									//$datoftp_recovery_server $datoftp_recovery_user $datoftp_recovery_pass $datoftp_recovery_port
 									
-									//echo $datoftp_server.'    '.$datoftp_port;
+									//echo $datoftp_server.'    '.$datoftp_port.'<br>';
 									
 									$sftp = new Net_SFTP($datoftp_server,$datoftp_port);  
 									
-									
+									//echo $datoftp_user.'  '.$datoftp_pass;
 									
 									if (!$sftp->login($datoftp_user, $datoftp_pass)) 
 										{
-											exit('Login Failed bodega');
+											echo json_encode((['status'=>'error','code'=>205,'message'=>'Login SFTP Failed ']));
+											exit;
 										}
 									else 
 										{
@@ -1603,7 +1604,8 @@ if(isset($_REQUEST['otraoperation'])) {
 								
 								if (!$sftp->login($datoftp_load_user, $datoftp_load_pass))
 									{
-										exit('Login Failed load');
+										echo json_encode((['status'=>'error','code'=>205,'message'=>'Login SFTP Failed ']));
+											exit;
 									}
 								
 								if ($sftp->file_exists($cabezaloadsftp))
@@ -13955,7 +13957,7 @@ if(isset($_REQUEST['otraoperation'])) {
 														
 														if (!$sftp->login($datoftp_user, $datoftp_pass))
 															{
-																exit('Login Failed');
+																exit('Login Failed ');
 															}
 														$sftp->get($server_file, $local_file);
 															
@@ -17904,6 +17906,11 @@ if(isset($_REQUEST['otraoperation'])) {
 				
 				//la local
 				
+				if (!file_exists($ruta_bodega.$nombreb))
+				{
+					mkdir($ruta_bodega.$nombreb, 0777, true);
+				}
+				
 				if (!file_exists($ruta_recovery.$nombreb))
 					{
 						mkdir($ruta_recovery.$nombreb, 0777, true);
@@ -18858,46 +18865,52 @@ if(isset($_REQUEST['otraoperation'])) {
 				
 				if ($modoload == 'powerfile2')
 					{
-						
+							
 						$dir = $ruta_load;
-						
+							
 						$directorio = opendir($dir);
 					}
 				else
 					{
 						if ($modoload == 'FTP')
-							{
-								//$dir = $ruta_loadftp;
-								//se asigna la carpeta local para el manejo
-								$dir = $ruta_load;
-								
-							}
+						{
+							//$dir = $ruta_loadftp;
+							//se asigna la carpeta local para el manejo
+							$dir = $ruta_load;
+					
+						}
 						else
+						{
+							if ($modoload == 'SFTP')
 							{
-								if ($modoload == 'SFTP')
-									{
-										//$dir = $ruta_loadsftp;  $ruta_loadftp
-										$dir = $ruta_load;
-									}
+								//$dir = $ruta_loadsftp;
+								$dir = $ruta_load;
 							}
-					}	
+						}
+					}
 				
-					
-					//se crean las bodegas en remoto si no existen
-					
 					//la local
+					
+					if (!file_exists($ruta_bodega.$nombreb))
+					{
+						mkdir($ruta_bodega.$nombreb, 0777, true);
+					}
 					
 					if (!file_exists($ruta_recovery.$nombreb))
 					{
 						mkdir($ruta_recovery.$nombreb, 0777, true);
 					}
+						
+					//se crean las bodegas en remoto si no existen
+					
+						
 					
 					if ($modobodega == 'FTP')
 					{
 						$bodegaexiste  = 0 ;
-						
+					
 						$conn_id = ftp_connect($ftp_server,$ftp_port) or die("No se pudo conectar a $ftp_server");
-						
+					
 						// intentar iniciar sesi�n
 						if (@ftp_login($conn_id, $ftp_user, $ftp_pass))
 						{
@@ -18907,10 +18920,10 @@ if(isset($_REQUEST['otraoperation'])) {
 						{
 							$ftpconectado = false; //echo "No se pudo conectar como $ftp_user\n";
 						}
-						
+					
 						if ($ftpconectado == false)
 						{
-							
+								
 							echo 'no se conecto';
 							exit;
 						}
@@ -18920,7 +18933,7 @@ if(isset($_REQUEST['otraoperation'])) {
 							if (@ftp_chdir ($conn_id, $ruta_bodegaftp.$nombreb))
 							{
 								$bodegaexiste  = 1;
-								
+					
 							}
 							else
 							{
@@ -18934,98 +18947,107 @@ if(isset($_REQUEST['otraoperation'])) {
 									$bodegaexiste  = 0;
 								}
 							}
-							
 							ftp_close($conn_id);
-							
-							$conn_id = ftp_connect($datoftp_recovery_server,$datoftp_recovery_port) or die("No se pudo conectar a $datoftp_recovery_server");
-							
-							// intentar iniciar sesi�n
-							if (@ftp_login($conn_id, $datoftp_recovery_user, $datoftp_recovery_pass))
-								{
-									//la de recovery
-									if (@ftp_chdir ($conn_id, $ruta_recoveryftp.$nombreb))
-									{
-										$bodegaexiste  = 1;
-										
-									}
-									else
-									{
-										//se crea
-										if (@ftp_mkdir($conn_id, $ruta_recoveryftp.$nombreb))
-										{
-											$bodegaexiste  = 1;
-										}
-										else
-										{
-											$bodegaexiste  = 0;
-										}
-									}
-								}
-								ftp_close($conn_id);
+					
+					
 						}
-						
+					
 					}
 					else
 					{
 						if ($modobodega == 'SFTP')
+						{
+							$bodegaexiste  = 0 ;
+					
+							$sftp = new Net_SFTP($datoftp_server,$datoftp_port);
+					
+							if (!$sftp->login($datoftp_user, $datoftp_pass))
 							{
-								$bodegaexiste  = 0 ;
-								
-								$sftp = new Net_SFTP($datoftp_server,$datoftp_port);
-								
-								if (!$sftp->login($datoftp_user, $datoftp_pass)) 
-									{
-										exit('Login Failed');
-									}
-								
-								//la de bodega ftp
-								if ($sftp->file_exists($ruta_bodegasftp.$nombreb))
-									{
-										$bodegaexiste= 1;
-										
-									}
-								else
-									{
-										//se crea
-										if ($sftp->mkdir($ruta_bodegasftp.$nombreb))
-											{
-												$bodegaexiste= 1;
-											}
-										else
-											{
-												$bodegaexiste = 0;
-											}
-										
-									}
-								//la de sftp del recovery
-								
-								$sftp = new Net_SFTP($datoftp_recovery_server,$datoftp_recovery_port);
-								
-								if (!$sftp->login($datoftp_recovery_user, $datoftp_recovery_pass))
-									{
-										exit('Login Failed');
-									}
-								
-								if ($sftp->file_exists($ruta_recoverysftp.$nombreb))
-									{
-										$bodegaexiste= 1;
-										
-									}
-								else
-									{
-										//se crea
-										if ($sftp->mkdir($ruta_recoverysftp.$nombreb))
-											{
-												$bodegaexiste= 1;
-											}
-										else
-											{
-												$bodegaexiste = 0;
-											}
-										
-									}
-								
+								exit('Login Failed');
 							}
+							//la de bodega ftp
+							if ($sftp->file_exists($ruta_bodegasftp.$nombreb))
+							{
+								$bodegaexiste= 1;
+									
+							}
+							else
+							{
+								//se crea
+								if ($sftp->mkdir($ruta_bodegasftp.$nombreb))
+								{
+									$bodegaexiste= 1;
+								}
+								else
+								{
+									$bodegaexiste = 0;
+								}
+									
+							}
+								
+								
+						}
+					}
+					
+					//las de recovery
+					if ($modorecovery == 'FTP')
+					{
+						$conn_id = ftp_connect($datoftp_recovery_server,$datoftp_recovery_port) or die("No se pudo conectar a $datoftp_recovery_server");
+					
+						if (@ftp_login($conn_id, $datoftp_recovery_user, $datoftp_recovery_pass))
+						{
+							if (@ftp_chdir ($conn_id, $ruta_recoveryftp.$nombreb))
+							{
+								$bodegaexiste  = 1;
+									
+							}
+							else
+							{
+								//se crea
+								if (@ftp_mkdir($conn_id, $ruta_recoveryftp.$nombreb))
+								{
+									$bodegaexiste  = 1;
+								}
+								else
+								{
+									$bodegaexiste  = 0;
+								}
+							}
+						}
+						ftp_close($conn_id);
+					}
+					else
+					{
+						if ($modorecovery == 'SFTP')
+						{
+							//la de sftp
+					
+							$sftp = new Net_SFTP($datoftp_recovery_server,$datoftp_recovery_port);
+					
+							if (!$sftp->login($datoftp_recovery_user, $datoftp_recovery_pass))
+							{
+								exit('Login Failed');
+							}
+					
+							if ($sftp->file_exists($ruta_recoverysftp.$nombreb))
+							{
+								$bodegaexiste= 1;
+					
+							}
+							else
+							{
+								//se crea
+								if ($sftp->mkdir($ruta_recoverysftp.$nombreb))
+								{
+									$bodegaexiste= 1;
+								}
+								else
+								{
+									$bodegaexiste = 0;
+								}
+					
+							}
+						}
 					}
 					
 				require_once('manejozip.php');
@@ -19034,124 +19056,111 @@ if(isset($_REQUEST['otraoperation'])) {
 				
 				if ($modoload == 'powerfile2')
 				{
-					
+						
 					$directorio = opendir($dir); //ruta de la carga
-					
+						
 				}
 				else
 				{
 					if ( $modoload == 'FTP')
 					{
-						
+							
 						$directorio = opendir($dir); //ruta de la carga
-						
-						$conn_id = ftp_connect($datoftp_load_server,$datoftp_load_port) or die("No se pudo conectar a $datoftp_load_server");
-						
-						// intentar iniciar sesi�n
-						if (@ftp_login($conn_id, $datoftp_load_user, $datoftp_load_pass))
-							{
-								$ftpconectado = true;//echo "Conectado como $ftp_user@$ftp_server\n";
-							}
-						else
-							{
-								$ftpconectado = false; //echo "No se pudo conectar como $ftp_user\n";
-							}
-						
-						if ($ftpconectado == false)
-							{
-								
-								echo 'no se conecto';
-								exit;
-							}
-						else
-							{
 							
-								ftp_pasv($conn_id, true);
-								
-								$dirftp = $ruta_loadftp;     
-								
-								$directorioftp = ftp_nlist($conn_id, $dirftp);   
+						ftp_pasv($conn_id, true);
 							
-								//pasamos los archivos del ftp server a la carpeta local para su procesamiento
-								
-								$resultadosftp = array();
-								
-								for ($iftp = 0; $iftp< count($directorioftp); $iftp++)
+						$dirftp = $ruta_loadftp;
+							
+						$directorioftp = ftp_nlist($conn_id, $dirftp);
+							
+						//pasamos los archivos del ftp server a la carpeta local para su procesamiento
+							
+						$resultadosftp = array();
+							
+						for ($iftp = 0; $iftp< count($directorioftp); $iftp++)
+						{
+							if ($directorioftp[$iftp] != '.' and $directorioftp[$iftp] != '..' )
+							{
+									
+								$remote_file = $ruta_loadsftp.$directorioftp[$iftp];  //echo $remote_file.'<br>';
+									
+								$local_file = $ruta_loadsftp.$directorioftp[$iftp];   // echo $local_file.'<br>';
+									
+									
+								$handle = fopen('..'.$local_file, 'w');
+									
+								if (ftp_fget($conn_id, $handle, $remote_file, FTP_ASCII, 0))
 								{
-									if ($directorioftp[$iftp] != '.' and $directorioftp[$iftp] != '..' )
-									{
-										
-										$remote_file = $directorioftp[$iftp];  //echo $remote_file.'<br>';
-										
-										$local_file = $directorioftp[$iftp];   // echo $local_file.'<br>';
-										
-										
-										$handle = fopen('..'.$local_file, 'w');
-										
-										if (ftp_fget($conn_id, $handle, $remote_file, FTP_ASCII, 0))
-										{
-											$resultadosftp[]['file'] = $local_file;
-											$resultadosftp[]['accion'] = true;
-										}
-										else
-										{
-											$resultadosftp[]['file'] = $local_file;
-											$resultadosftp[]['accion'] = false;
-										}
-										fclose($handle);
-									}
+									$resultadosftp[]['file'] = $local_file;
+									$resultadosftp[]['accion'] = true;
 								}
+								else
+								{
+									$resultadosftp[]['file'] = $local_file;
+									$resultadosftp[]['accion'] = false;
+								}
+								fclose($handle);
+									
+								//e limpia la bodega remota
+									
+									
 							}
+						}
+							
 						ftp_close($conn_id);//cierro la sesion ftp
 					}
 					else
 					{
 						if ( $modoload == 'SFTP')
 						{
-							$dir_sftp = $ruta_loadsftp;
-							
+							$directorio = opendir($dir); //ruta de la carga
+								
+							$dir_sftp = $ruta_loadsftp;  //echo $dir_sftp;
+								
 							$sftp = new Net_SFTP($datoftp_load_server,$datoftp_load_port);
-							
+								
 							if (!$sftp->login($datoftp_load_user, $datoftp_load_pass))
-								{
-									exit('Login Failed');
-								}
-							
+							{
+								echo json_encode((['status'=>'error','code'=>205,'message'=>'Login SFTP Failed load ']));
+								exit;
+							}
+								
+								
 							$directorio_sftp =$sftp->nlist($dir_sftp);
-							
+								
 							$resultados_sftp = array();
-							
+								
 							for ($isftp = 0; $isftp< count($directorio_sftp); $isftp++)
+							{
+								if ($directorio_sftp[$isftp] != '.' and $directorio_sftp[$isftp] != '..' )
 								{
-									if ($directorio_sftp[$isftp] != '.' and $directorio_sftp[$isftp] != '..' )
-										{
-											
-											$remote_file = $directorio_sftp[$isftp];  //echo $remote_file.'<br>';
-											
-											$local_file = $directorio_sftp[$isftp];   // echo $local_file.'<br>';
-											
-											
-											//$handle = fopen('..'.$local_file, 'w');
-											
-											if ($sftp->get($remote_file, $local_file))
-												{
-													$resultados_sftp[]['file'] = $local_file;
-													$resultados_sftp[]['accion'] = true;
-												}
-											else
-												{
-													$resultados_sftp[]['file'] = $local_file;
-													$resultados_sftp[]['accion'] = false;
-												}
-											//fclose($handle);
-										}
+										
+									$remote_file = $ruta_loadsftp.$directorio_sftp[$isftp];  //echo $remote_file.'<br>';
+										
+									$local_file = $ruta_load.$directorio_sftp[$isftp];   //echo $local_file.'<br>';
+										
+				
+									//$handle = fopen('..'.$local_file, 'w');
+										
+									if ($sftp->get($remote_file, $local_file))
+									{
+										$resultados_sftp[]['file'] = $local_file;
+										$resultados_sftp[]['accion'] = true;
+									}
+									else
+									{
+										$resultados_sftp[]['file'] = $local_file;
+										$resultados_sftp[]['accion'] = false;
+									}
+									//fclose($handle);
 								}
-							
+							}
+								
 						}//fin del sftp
 					}	// fin de ftp
 				}	//fin de powerfile2
 				
-				
+				//exit;
 				
 				while (($archivo = readdir($directorio)) !== false)//obtenemos un archivo y luego otro sucesivamente
 					{
@@ -21505,6 +21514,8 @@ if(isset($_REQUEST['otraoperation'])) {
 											
 											if (copy($ficherozip, $nuevo_fichero))
 											{
+												unlink($ficherozip);
+												
 												if ($modoload == 'powerfile2')
 												{
 													unlink($ficherozip);
@@ -21669,6 +21680,167 @@ if(isset($_REQUEST['otraoperation'])) {
 				
 				require_once('manejozip.php');
 				
+				//la local
+				
+				if (!file_exists($ruta_bodega.$nombreb))
+					{
+						mkdir($ruta_bodega.$nombreb, 0777, true);
+					}
+				
+				if (!file_exists($ruta_recovery.$nombreb))
+					{
+						mkdir($ruta_recovery.$nombreb, 0777, true);
+					}
+					
+					//se crean las bodegas en remoto si no existen
+						
+					
+						
+					if ($modobodega == 'FTP')
+						{
+							$bodegaexiste  = 0 ;
+								
+							$conn_id = ftp_connect($ftp_server,$ftp_port) or die("No se pudo conectar a $ftp_server");
+								
+							// intentar iniciar sesi�n
+							if (@ftp_login($conn_id, $ftp_user, $ftp_pass))
+							{
+								$ftpconectado = true;//echo "Conectado como $ftp_user@$ftp_server\n";
+							}
+							else
+							{
+								$ftpconectado = false; //echo "No se pudo conectar como $ftp_user\n";
+							}
+								
+							if ($ftpconectado == false)
+							{
+									
+								echo 'no se conecto';
+								exit;
+							}
+							else
+							{
+								//la bodega de ftp
+								if (@ftp_chdir ($conn_id, $ruta_bodegaftp.$nombreb))
+								{
+									$bodegaexiste  = 1;
+										
+								}
+								else
+								{
+									//se crea
+									if (@ftp_mkdir($conn_id, $ruta_bodegaftp.$nombreb))
+									{
+										$bodegaexiste  = 1;
+									}
+									else
+									{
+										$bodegaexiste  = 0;
+									}
+								}
+								ftp_close($conn_id);
+								
+						
+							}
+								
+						}
+					else
+						{
+							if ($modobodega == 'SFTP')
+								{
+									$bodegaexiste  = 0 ;
+										
+									$sftp = new Net_SFTP($datoftp_server,$datoftp_port);
+										
+									if (!$sftp->login($datoftp_user, $datoftp_pass))
+									{
+										exit('Login Failed');
+									}
+									//la de bodega ftp
+									if ($sftp->file_exists($ruta_bodegasftp.$nombreb))
+									{
+										$bodegaexiste= 1;
+											
+									}
+									else
+									{
+										//se crea
+										if ($sftp->mkdir($ruta_bodegasftp.$nombreb))
+										{
+											$bodegaexiste= 1;
+										}
+										else
+										{
+											$bodegaexiste = 0;
+										}
+											
+									}
+									
+							
+								}
+						}
+						
+						//las de recovery
+					if ($modorecovery == 'FTP')
+						{
+								$conn_id = ftp_connect($datoftp_recovery_server,$datoftp_recovery_port) or die("No se pudo conectar a $datoftp_recovery_server");
+								
+								if (@ftp_login($conn_id, $datoftp_recovery_user, $datoftp_recovery_pass))
+								{
+									if (@ftp_chdir ($conn_id, $ruta_recoveryftp.$nombreb))
+									{
+										$bodegaexiste  = 1;
+											
+									}
+									else
+									{
+										//se crea
+										if (@ftp_mkdir($conn_id, $ruta_recoveryftp.$nombreb))
+										{
+											$bodegaexiste  = 1;
+										}
+										else
+										{
+											$bodegaexiste  = 0;
+										}
+									}
+								}
+								ftp_close($conn_id);
+						}		
+					else
+						{
+							if ($modorecovery == 'SFTP')
+								{
+									//la de sftp
+										
+									$sftp = new Net_SFTP($datoftp_recovery_server,$datoftp_recovery_port);
+										
+									if (!$sftp->login($datoftp_recovery_user, $datoftp_recovery_pass))
+										{
+											exit('Login Failed');
+										}
+										
+									if ($sftp->file_exists($ruta_recoverysftp.$nombreb))
+										{
+											$bodegaexiste= 1;
+										
+										}
+									else
+										{
+											//se crea
+											if ($sftp->mkdir($ruta_recoverysftp.$nombreb))
+												{
+													$bodegaexiste= 1;
+												}
+											else
+												{
+													$bodegaexiste = 0;
+												}
+										
+										}
+								}	
+						}
+				//echo 'listo';exit;
 				$ctlvalidado = 0;
 				
 				$numarchzip = 0; 
@@ -21711,9 +21883,9 @@ if(isset($_REQUEST['otraoperation'])) {
 											if ($directorioftp[$iftp] != '.' and $directorioftp[$iftp] != '..' )
 												{
 													
-													$remote_file = $directorioftp[$iftp];  //echo $remote_file.'<br>';
+													$remote_file = $ruta_loadsftp.$directorioftp[$iftp];  //echo $remote_file.'<br>';
 													
-													$local_file = $directorioftp[$iftp];   // echo $local_file.'<br>';
+													$local_file = $ruta_loadsftp.$directorioftp[$iftp];   // echo $local_file.'<br>';
 													
 													
 													$handle = fopen('..'.$local_file, 'w');
@@ -21729,26 +21901,33 @@ if(isset($_REQUEST['otraoperation'])) {
 															$resultadosftp[]['accion'] = false;
 														}														
 													fclose($handle);
+													
+													//e limpia la bodega remota
+													
+													
 												}	
 										}	
 									
-										ftp_close($conn_id);//cierro la sesion ftp									
+										ftp_close($conn_id);//cierro la sesion ftp		 							
 								}
 							else
 								{
 									if ( $modoload == 'SFTP')
 										{
-											$dir_sftp = $ruta_loadsftp;  
+											$directorio = opendir($dir); //ruta de la carga
 											
-											$sftp = new Net_SFTP($datoftp_load_server);
+											$dir_sftp = $ruta_loadsftp;  //echo $dir_sftp;
+											
+											$sftp = new Net_SFTP($datoftp_load_server,$datoftp_load_port);  
 											
 											if (!$sftp->login($datoftp_load_user, $datoftp_load_pass)) 
 												{
-													exit('Login Failed');
+													echo json_encode((['status'=>'error','code'=>205,'message'=>'Login SFTP Failed load ']));
+													exit;
 												}
 											
 											
-											$directorio_sftp =$sftp->nlist($dir_sftp);
+											$directorio_sftp =$sftp->nlist($dir_sftp);   
 											
 											$resultados_sftp = array();
 											
@@ -21757,9 +21936,9 @@ if(isset($_REQUEST['otraoperation'])) {
 												if ($directorio_sftp[$isftp] != '.' and $directorio_sftp[$isftp] != '..' )
 												{
 													
-													$remote_file = $directorio_sftp[$isftp];  //echo $remote_file.'<br>';
+													$remote_file = $ruta_loadsftp.$directorio_sftp[$isftp];  //echo $remote_file.'<br>';
 													
-													$local_file = $directorio_sftp[$isftp];   // echo $local_file.'<br>';
+													$local_file = $ruta_load.$directorio_sftp[$isftp];   //echo $local_file.'<br>'; 
 													
 													 
 													//$handle = fopen('..'.$local_file, 'w');
@@ -21787,7 +21966,7 @@ if(isset($_REQUEST['otraoperation'])) {
 				//procedimientmo para powerfile2	
 				/*if ($modobodega == 'powerfile2')
 					{*/
-						while (($archivo = readdir($directorio)) !== false)//obtenemos un archivo y luego otro sucesivamente
+					while (($archivo = readdir($directorio)) !== false)//obtenemos un archivo y luego otro sucesivamente
 						{
 							if (is_dir($archivo))//verificamos si es o no un directorio
 							{
@@ -21806,7 +21985,7 @@ if(isset($_REQUEST['otraoperation'])) {
 								
 								$posnombrefiltro = strpos($nombreparafiltro, 'vehno');
 								
-								$file_ext = strtolower($nombrear2[1]);
+								$file_ext = strtolower($nombrear2[1]);  //echo $ruta_load; exit;
 								
 								//$vectindimagen = array();
 								
@@ -22141,147 +22320,7 @@ if(isset($_REQUEST['otraoperation'])) {
 											
 											$destino = $ruta_bodega.$nombreb.'/';
 											
-											//se crean las bodegas en remoto si no existen
 											
-											//la local
-											
-											if (!file_exists($ruta_recovery.$nombreb))
-												{
-													mkdir($ruta_recovery.$nombreb, 0777, true);
-												}
-											
-											if ($modobodega == 'FTP')
-												{
-													$bodegaexiste  = 0 ;
-													
-													$conn_id = ftp_connect($ftp_server,$ftp_port) or die("No se pudo conectar a $ftp_server");
-													
-													// intentar iniciar sesi�n
-													if (@ftp_login($conn_id, $ftp_user, $ftp_pass))
-														{
-															$ftpconectado = true;//echo "Conectado como $ftp_user@$ftp_server\n";
-														}
-													else
-														{
-															$ftpconectado = false; //echo "No se pudo conectar como $ftp_user\n";
-														}
-													
-													if ($ftpconectado == false)
-														{
-															
-															echo 'no se conecto';
-															exit;
-														}
-													else
-														{
-															//la bodega de ftp														
-															if (@ftp_chdir ($conn_id, $ruta_bodegaftp.$nombreb))
-																{
-																	$bodegaexiste  = 1;
-																	
-																}
-															else
-																{
-																	//se crea
-																	if (@ftp_mkdir($conn_id, $ruta_bodegaftp.$nombreb))
-																		{
-																			$bodegaexiste  = 1;
-																		}	
-																	else
-																		{
-																			$bodegaexiste  = 0;
-																		}	
-																}
-															ftp_close($conn_id);
-															//la de recovery
-															$conn_id = ftp_connect($datoftp_recovery_server,$datoftp_recovery_port) or die("No se pudo conectar a $datoftp_recovery_server");
-															
-															if (@ftp_login($conn_id, $datoftp_recovery_user, $datoftp_recovery_pass))
-																{
-																		if (@ftp_chdir ($conn_id, $ruta_recoveryftp.$nombreb))
-																			{
-																				$bodegaexiste  = 1;
-																				
-																			}
-																		else
-																			{
-																				//se crea
-																				if (@ftp_mkdir($conn_id, $ruta_recoveryftp.$nombreb))
-																					{
-																						$bodegaexiste  = 1;
-																					}
-																				else
-																					{
-																						$bodegaexiste  = 0;
-																					}
-																			}
-																}	
-															ftp_close($conn_id);
-																
-														}
-													
-												}
-											else
-												{
-													if ($modobodega == 'SFTP')
-														{
-															$bodegaexiste  = 0 ;
-															
-															$sftp = new Net_SFTP($datoftp_server,$datoftp_port);
-															
-															if (!$sftp->login($datoftp_user, $datoftp_pass))
-																{
-																	exit('Login Failed');
-																}
-															//la de bodega ftp
-															if ($sftp->file_exists($ruta_bodegasftp.$nombreb))
-																{
-																	$bodegaexiste= 1;
-																	
-																}
-															else
-																{
-																	//se crea
-																	if ($sftp->mkdir($ruta_bodegasftp.$nombreb))
-																		{
-																			$bodegaexiste= 1;
-																		}
-																	else
-																		{
-																			$bodegaexiste = 0;
-																		}
-																	
-																}
-															//la de sftp
-															
-															$sftp = new Net_SFTP($datoftp_recovery_server,$datoftp_recovery_port);
-															
-															if (!$sftp->login($datoftp_recovery_user, $datoftp_recovery_pass))
-																{
-																	exit('Login Failed');
-																}
-															
-															if ($sftp->file_exists($ruta_recoverysftp.$nombreb))
-																{
-																	$bodegaexiste= 1;
-																	
-																}
-															else
-																{
-																	//se crea
-																	if ($sftp->mkdir($ruta_recoverysftp.$nombreb))
-																		{
-																			$bodegaexiste= 1;
-																		}
-																	else
-																		{
-																			$bodegaexiste = 0;
-																		}
-																	
-																}
-																
-														}	
-												}	
 											
 											
 											
@@ -24951,9 +24990,11 @@ if(isset($_REQUEST['otraoperation'])) {
 											
 											if (copy($ficherozip, $nuevo_fichero))
 											{
+												unlink($ficherozip);
+												
 												if ($modoload == 'powerfile2')
 													{
-														unlink($ficherozip);
+														//unlink($ficherozip);
 													}
 												else
 													{
@@ -25196,9 +25237,10 @@ if(isset($_REQUEST['otraoperation'])) {
 											
 											if (copy($ficherozip, $nuevo_fichero))
 													{
+														unlink($ficherozip);
 														if ($modoload == 'powerfile2')
 															{
-																unlink($ficherozip);
+																//unlink($ficherozip);
 															}
 														else
 																{
