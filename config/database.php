@@ -34,7 +34,7 @@ return [
     |
     */
 
-/*cambiarlo*/		'default' => $espaciotrabajo,
+/*cambiarlo*/		'default' => 'powerfile2',
 
     /*
     |--------------------------------------------------------------------------
@@ -92,42 +92,6 @@ return [
     		 'strict' => true,
     		 'engine' => null,
     		 ],
-		'loreal' => [
-			'driver' => 'mysql',
-			'host' => '127.0.0.1',
-			'port' => '3306',
-			'database' => 'loreal',
-			'username' => 'root',
-			'password' => 'loquesea',
-			'collation' => 'utf8_unicode_ci',
-			'prefix' => '',
-			'strict' => true,
-			'engine' => null,
-			],
-		'leaseplan' => [
-			'driver' => 'mysql',
-			'host' => '127.0.0.1',
-			'port' => '3306',
-			'database' => 'leaseplan',
-			'username' => 'root',
-			'password' => 'loquesea',
-			'collation' => 'utf8_unicode_ci',
-			'prefix' => '',
-			'strict' => true,
-			'engine' => null,
-			],
-		'jlt' => [
-			'driver' => 'mysql',
-			'host' => '127.0.0.1',
-			'port' => '3306',
-			'database' => 'jlt',
-			'username' => 'root',
-			'password' => 'loquesea',
-			'collation' => 'utf8_unicode_ci',
-			'prefix' => '',
-			'strict' => true,
-			'engine' => null,
-			],
 			//fin de bd
     ],
 
