@@ -13924,7 +13924,7 @@ if(isset($_REQUEST['otraoperation'])) {
 												
 														$local_file = $ruta_bodega.$labodega."/".$vlasimg[0].'_.dat';
 														
-														$server_file = $ruta_bodegaftp.$vlasimg[0].'_.dat';
+														$server_file = $ruta_bodegaftp.$labodega.'/'.$vlasimg[0].'_.dat';
 														
 																						
 														if (ftp_get($conn_id, $local_file, $server_file, FTP_BINARY)) 
@@ -13946,12 +13946,12 @@ if(isset($_REQUEST['otraoperation'])) {
 										else
 											{
 												if ($modobodega == 'SFTP')
-													{
+													{  // echo 'sami';  exit;
 														$sftp = new Net_SFTP($datoftp_server,$datoftp_port);
 														
-														$local_file = $ruta_bodega.$labodega."/".$vlasimg[0].'_.dat';
+														$local_file = $ruta_bodega.$labodega."/".$vlasimg[0].'_.dat';   //echo $local_file.'<br>';
 														
-														$server_file = $ruta_bodegasftp.$vlasimg[0].'_.dat';  
+														$server_file = $ruta_bodegasftp.$labodega.'/'.$vlasimg[0].'_.dat';        //  echo $server_file; // exit;
 														
 														if (!$sftp->login($datoftp_user, $datoftp_pass))
 															{
@@ -13960,11 +13960,12 @@ if(isset($_REQUEST['otraoperation'])) {
 														$sftp->get($server_file, $local_file);
 															
 													}	
+												//	exit;
 											}	
 											
 										inFTP($vlasimg[0].'_.'.$vlaext[0],$ruta_bodega.$labodega,$ruta_temp,$kweyllave);
 										
-										if ($modobodega == 'FTP')
+										if ($modobodega == 'FTP' or $modobodega == 'SFTP')
 											{		
 													//echo $local_file;
 													unlink($local_file);
@@ -14399,59 +14400,78 @@ if(isset($_REQUEST['otraoperation'])) {
 									
 											//con encriptaci�n
 											if ($modobodega == 'FTP')
+											{
+												// establecer una conexi�n o finalizarla
+												$conn_id = ftp_connect($ftp_server,$ftp_port) or die("No se pudo conectar a $ftp_server");
+											
+												// intentar iniciar sesi�n
+												if (@ftp_login($conn_id, $ftp_user, $ftp_pass))
 												{
-													// establecer una conexi�n o finalizarla
-													$conn_id = ftp_connect($ftp_server,$ftp_port) or die("No se pudo conectar a $ftp_server");
-													
-													// intentar iniciar sesi�n
-													if (@ftp_login($conn_id, $ftp_user, $ftp_pass))
-														{
-															$ftpconectado = true;
-														}
-													else
-														{
-															$ftpconectado = false;
-														}
-													
-													if ($ftpconectado == false)
-														{
-															
-															echo 'no se conecto';
-															exit;
-														}
-													else
-														{
-															
-															$local_file = $ruta_bodega.$labodega."/".$vlasimg[0].'_.dat';
-															
-															$server_file = $ruta_bodegaftp.$vlasimg[0].'_.dat';
-															
-															
-															if (ftp_get($conn_id, $local_file, $server_file, FTP_BINARY))
-																{
-																	//echo "Se ha guardado satisfactoriamente en $local_file\n";
-																	
-																	
-																}
-															else
-																{
-																	echo "Ha habido un problema\n";
-																}
-															
-														}
-													
-													// cerrar la conexi�n ftp
-													ftp_close($conn_id);
+													$ftpconectado = true;
+												}
+												else
+												{
+													$ftpconectado = false;
 												}
 											
+												if ($ftpconectado == false)
+												{
+											
+													echo 'no se conecto';
+													exit;
+												}
+												else
+												{
+											
+													$local_file = $ruta_bodega.$labodega."/".$vlasimg[0].'_.dat';
+											
+													$server_file = $ruta_bodegaftp.$labodega.'/'.$vlasimg[0].'_.dat';
+											
+											
+													if (ftp_get($conn_id, $local_file, $server_file, FTP_BINARY))
+													{
+														//echo "Se ha guardado satisfactoriamente en $local_file\n";
+											
+											
+													}
+													else
+													{
+														echo "Ha habido un problema\n";
+													}
+														
+												}
+													
+												// cerrar la conexi�n ftp
+												ftp_close($conn_id);
+											}
+											else
+											{
+												if ($modobodega == 'SFTP')
+												{  // echo 'sami';  exit;
+													$sftp = new Net_SFTP($datoftp_server,$datoftp_port);
+											
+													$local_file = $ruta_bodega.$labodega."/".$vlasimg[0].'_.dat';   //echo $local_file.'<br>';
+											
+													$server_file = $ruta_bodegasftp.$labodega.'/'.$vlasimg[0].'_.dat';        //  echo $server_file; // exit;
+											
+													if (!$sftp->login($datoftp_user, $datoftp_pass))
+													{
+														exit('Login Failed');
+													}
+													$sftp->get($server_file, $local_file);
+														
+												}
+												//	exit;
+											}
+												
 											inFTP($vlasimg[0].'_.'.$vlaext[0],$ruta_bodega.$labodega,$ruta_temp,$kweyllave);
 											
-											if ($modobodega == 'FTP')
-												{
-													//echo $local_file;
-													unlink($local_file);
-													
-												}
+											if ($modobodega == 'FTP' or $modobodega == 'SFTP')
+											{
+												//echo $local_file;
+												unlink($local_file);
+											
+											}
 									
 											if ($vlaext[0] == 'tif' or $vlaext[0] == 'tiff')
 												{
@@ -14890,59 +14910,78 @@ if(isset($_REQUEST['otraoperation'])) {
 														//con encriptaci�n
 															
 														if ($modobodega == 'FTP')
+														{
+															// establecer una conexi�n o finalizarla
+															$conn_id = ftp_connect($ftp_server,$ftp_port) or die("No se pudo conectar a $ftp_server");
+														
+															// intentar iniciar sesi�n
+															if (@ftp_login($conn_id, $ftp_user, $ftp_pass))
 															{
-																// establecer una conexi�n o finalizarla
-																$conn_id = ftp_connect($ftp_server,$ftp_port) or die("No se pudo conectar a $ftp_server");
-																
-																// intentar iniciar sesi�n
-																if (@ftp_login($conn_id, $ftp_user, $ftp_pass))
-																	{
-																		$ftpconectado = true;
-																	}
-																else
-																	{
-																		$ftpconectado = false;
-																	}
-																
-																if ($ftpconectado == false)
-																	{
-																		
-																		echo 'no se conecto';
-																		exit;
-																	}
-																else
-																	{
-																		
-																		$local_file = $ruta_bodega.$labodega."/".$vlasimg[0].'_.dat';
-																		
-																		$server_file = $ruta_bodegaftp.$vlasimg[0].'_.dat';
-																		
-																		
-																		if (ftp_get($conn_id, $local_file, $server_file, FTP_BINARY))
-																			{
-																				//echo "Se ha guardado satisfactoriamente en $local_file\n";
-																				
-																				
-																			}
-																		else
-																			{
-																				echo "Ha habido un problema\n";
-																			}
-																		
-																	}
-																
-																// cerrar la conexi�n ftp
-																ftp_close($conn_id);
+																$ftpconectado = true;
+															}
+															else
+															{
+																$ftpconectado = false;
 															}
 														
+															if ($ftpconectado == false)
+															{
+														
+																echo 'no se conecto';
+																exit;
+															}
+															else
+															{
+														
+																$local_file = $ruta_bodega.$labodega."/".$vlasimg[0].'_.dat';
+														
+																$server_file = $ruta_bodegaftp.$labodega.'/'.$vlasimg[0].'_.dat';
+														
+														
+																if (ftp_get($conn_id, $local_file, $server_file, FTP_BINARY))
+																{
+																	//echo "Se ha guardado satisfactoriamente en $local_file\n";
+														
+														
+																}
+																else
+																{
+																	echo "Ha habido un problema\n";
+																}
+																	
+															}
+																
+															// cerrar la conexi�n ftp
+															ftp_close($conn_id);
+														}
+														else
+														{
+															if ($modobodega == 'SFTP')
+															{  // echo 'sami';  exit;
+																$sftp = new Net_SFTP($datoftp_server,$datoftp_port);
+														
+																$local_file = $ruta_bodega.$labodega."/".$vlasimg[0].'_.dat';   //echo $local_file.'<br>';
+														
+																$server_file = $ruta_bodegasftp.$labodega.'/'.$vlasimg[0].'_.dat';        //  echo $server_file; // exit;
+														
+																if (!$sftp->login($datoftp_user, $datoftp_pass))
+																{
+																	exit('Login Failed');
+																}
+																$sftp->get($server_file, $local_file);
+																	 
+															}
+															//	exit;
+														}
+															
 														inFTP($vlasimg[0].'_.'.$vlaext[0],$ruta_bodega.$labodega,$ruta_temp,$kweyllave);
 														
-														if ($modobodega == 'FTP')
-															{
-																//echo $local_file;
-																unlink($local_file);
-																
-															}
+														if ($modobodega == 'FTP' or $modobodega == 'SFTP')
+														{
+															//echo $local_file;
+															unlink($local_file);
+														
+														}
 															
 														if ($vlaext[0] == 'tif' or $vlaext[0] == 'tiff')
 															{
@@ -15907,7 +15946,7 @@ if(isset($_REQUEST['otraoperation'])) {
 														
 														$local_file = $ruta_bodega.$labodega."/".$img.'_.dat';
 														
-														$server_file = $ruta_bodegaftp.$img.'_.dat';
+														$server_file = $ruta_bodegaftp.$labodega."/".$img.'_.dat';
 														
 														
 														if (ftp_get($conn_id, $local_file, $server_file, FTP_BINARY))
@@ -15926,10 +15965,29 @@ if(isset($_REQUEST['otraoperation'])) {
 												// cerrar la conexi�n ftp
 												ftp_close($conn_id);
 											}
+										else 
+											{
+												if ($modobodega == 'SFTP')
+													{  
+													$sftp = new Net_SFTP($datoftp_server,$datoftp_port);
+													
+													$local_file = $ruta_bodega.$labodega."/".$img.'_.dat';   //echo $local_file.'<br>';
+													
+													$server_file = $ruta_bodegasftp.$labodega.'/'.$img.'_.dat';        //  echo $server_file; // exit;
+													
+													if (!$sftp->login($datoftp_user, $datoftp_pass))
+														{
+															exit('Login Failed');
+														}
+													$sftp->get($server_file, $local_file);
+														
+													}
+								
+											}	
 										
 										inFTP($img.'_.'.$exte,$ruta_bodega.$labodega,$ruta_temp,$kweyllave);
 										
-										if ($modobodega == 'FTP')
+										if ($modobodega == 'FTP' or $modobodega == 'SFTP')
 											{
 												//echo $local_file;
 												unlink($local_file);
@@ -16391,7 +16449,7 @@ if(isset($_REQUEST['otraoperation'])) {
 														
 														$local_file = $ruta_bodega.$labodega."/".$img.'_.dat';
 														
-														$server_file = $ruta_bodegaftp.$img.'_.dat';
+														$server_file = $ruta_bodegaftp.$labodega."/".$img.'_.dat';
 														
 														
 														if (ftp_get($conn_id, $local_file, $server_file, FTP_BINARY))
@@ -16410,10 +16468,29 @@ if(isset($_REQUEST['otraoperation'])) {
 													// cerrar la conexi�n ftp
 													ftp_close($conn_id);
 												}
+												else
+												{
+													if ($modobodega == 'SFTP')
+													{
+														$sftp = new Net_SFTP($datoftp_server,$datoftp_port);
+															
+														$local_file = $ruta_bodega.$labodega."/".$img.'_.dat';   //echo $local_file.'<br>';
+															
+														$server_file = $ruta_bodegasftp.$labodega.'/'.$img.'_.dat';        //  echo $server_file; // exit;
+															
+														if (!$sftp->login($datoftp_user, $datoftp_pass))
+														{
+															exit('Login Failed');
+														}
+														$sftp->get($server_file, $local_file);
+												
+													}
+												
+												}
 												
 												inFTP($img.'_.'.$exte,$ruta_bodega.$labodega,$ruta_temp,$kweyllave);
 												
-												if ($modobodega == 'FTP')
+												if ($modobodega == 'FTP' or $modobodega == 'SFTP')
 												{
 													//echo $local_file;
 													unlink($local_file);
@@ -16881,7 +16958,7 @@ if(isset($_REQUEST['otraoperation'])) {
 																			
 																			$local_file = $ruta_bodega.$labodega."/".$img.'_.dat';
 																			
-																			$server_file = $ruta_bodegaftp.$img.'_.dat';
+																			$server_file = $ruta_bodegaftp.$labodega."/".$img.'_.dat';
 																			
 																			
 																			if (ftp_get($conn_id, $local_file, $server_file, FTP_BINARY))
@@ -16900,10 +16977,29 @@ if(isset($_REQUEST['otraoperation'])) {
 																	// cerrar la conexi�n ftp
 																	ftp_close($conn_id);
 																}
+																else
+																{
+																	if ($modobodega == 'SFTP')
+																	{
+																		$sftp = new Net_SFTP($datoftp_server,$datoftp_port);
+																			
+																		$local_file = $ruta_bodega.$labodega."/".$img.'_.dat';   //echo $local_file.'<br>';
+																			
+																		$server_file = $ruta_bodegasftp.$labodega.'/'.$img.'_.dat';        //  echo $server_file; // exit;
+																			
+																		if (!$sftp->login($datoftp_user, $datoftp_pass))
+																		{
+																			exit('Login Failed');
+																		}
+																		$sftp->get($server_file, $local_file);
+																
+																	}
+																
+																}
 																
 																inFTP($img.'_.'.$exte,$ruta_bodega.$labodega,$ruta_temp,$kweyllave);
 																
-																if ($modobodega == 'FTP')
+																if ($modobodega == 'FTP' or $modobodega == 'SFTP')
 																	{
 																		//echo $local_file;
 																		unlink($local_file);
@@ -26568,21 +26664,24 @@ if(isset($_REQUEST['otraoperation'])) {
 				$iddocumentos= explode(",",$iddocumentos);
 				
 				//print_r($iddocumentos);
-				$timagenes = array();
+				$timagenes = array(); 
 				
 				//se buscan las imagenes de esos documento
+				
+				
 				
 				for ( $i = 0 ; $i < count($iddocumentos) ; $i ++)
 					{
 				
 						$sql = 'select id.id_documento,id.id_imagendocum ,id.nombre,id.extension,id.id_bodega,id.orden,id_estado  from sgd_imagen_documento id where  id_documento = '.$iddocumentos[$i].' order by id.orden asc';
-						//echo $sql;
+						//echo $configdb[0];
 						if ($configdb[0] == 'mysql')
 								{
 									$queryusuarios =  mysql_query($sql,$conn);
 									
 									while($campoimgin = mysql_fetch_array($queryusuarios))
 									{
+										
 										$nombreimg = $campoimgin['nombre'];
 										
 										$extimg = $campoimgin['extension'];
@@ -26592,6 +26691,8 @@ if(isset($_REQUEST['otraoperation'])) {
 										$labodega = 'Bodega_'.$bodega;
 										
 										$idimagen =  $campoimgin['id_imagendocum'];
+										
+										
 										
 										if (!file_exists($ruta_temp.$idimagen.'_.'.$extimg))
 										{
@@ -26644,11 +26745,12 @@ if(isset($_REQUEST['otraoperation'])) {
 												}
 											else
 												{
+													
 													if ($modobodega == 'SFTP')
 														{
-															$local_file = $ruta_bodega.$labodega."/".$idimagen.'_.dat';
+															$local_file = $ruta_bodega.$labodega."/".$idimagen.'_.dat';  //echo $local_file.'<br>';
 															
-															$server_file = $ruta_bodegasftp.$labodega.'/'.$idimagen.'_.dat';   
+															$server_file = $ruta_bodegasftp.$labodega.'/'.$idimagen.'_.dat';    // echo $server_file.'<br>';
 															
 															$sftp = new Net_SFTP($datoftp_server,$datoftp_port);
 															
@@ -26656,8 +26758,17 @@ if(isset($_REQUEST['otraoperation'])) {
 																{
 																	exit('Login Failed');
 																}
+															else 
+																{
+																	//echo 'conectado';
+																}	
+															$sftp->get($server_file, $local_file); 
 															
-															$sftp->get($server_file, $local_file);
+															//se copia el archvo desde aca hacia la bodega local
+															
+															//copy($idimagen.'_.dat', $ruta_bodega.$labodega."/".$idimagen.'_.dat');
+															
+															//echo 'listo'; exit;
 														}	
 												}	
 												
