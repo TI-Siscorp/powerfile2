@@ -34,7 +34,7 @@ return [
     |
     */
 
-/*cambiarlo*/		'default' => 'powerfile2',
+/*cambiarlo*/		'default' => $espaciotrabajo,
 
     /*
     |--------------------------------------------------------------------------
