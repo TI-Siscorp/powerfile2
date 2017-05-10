@@ -1,0 +1,430 @@
+@CHARSET "ISO-8859-1";
+
+.margen_btn{
+	margin-bottom: 3%;
+}
+
+.centrartexto{
+	 text-align: center !important;
+}
+
+.izqtexto{
+	text-align: left !important;
+}
+
+.dertexto{
+	text-align: right !important;
+}
+
+.agrandar:hover{
+	-webkit-transform: scale(3);
+	transform: scale(3);
+	z-index:999;
+}
+.img-borde_redonde{
+  border-radius: 21%;
+}  
+
+.icoremover{
+	color:#DC1800;
+	font-size:2em;
+	text-shadow: 5px 5px 5px #aaa;
+}
+.icoagrega{
+	color:#0095D6;
+	font-size:2em;
+	text-shadow: 5px 5px 5px #aaa;	
+}
+
+.sombraicono{
+	text-shadow: 5px 5px 5px #aaa;
+}
+
+.sombrafoto {
+	border: 0;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.57) !important;
+}
+.sombraiconobl{
+	text-shadow: 5px 5px 5px #EEECF8;
+}
+
+.noseve{
+	display: none;
+}
+
+.colorth1{
+	background-color: #F9FAFE;
+}
+
+.centrartabla{
+	position.relative;
+	margin-left:25%;
+	margin-rigth:25%;
+}
+
+.ajustainputtd{
+	width:100% !important;	
+}
+
+.imgajusta {
+    max-width: 100%;
+    height: auto;
+    width: auto/9; /* Bug de ie8 */
+}
+
+.iconomensajeerror{
+	/*font-size:2em;*/
+	color:#D21000;
+}
+
+.ancho100{
+	width:100%;
+}
+
+.habilitatodos[type=checkbox] + label
+ {
+  position: relative;
+ /* background: url(http://i.stack.imgur.com/ocgp1.jpg) no-repeat;*/
+  height: 20px;
+  width: 20px;
+  /*margin: 0 auto;*/
+  /*float:left;*/
+  display: inline-block;
+  border-radius: 15%;
+  transition: box-shadow 0.4s, border 0.4s;
+  border: solid 1px #00B0A0;
+  box-shadow: 0 0 1px #FFF;/* Soften the jagged edge */
+  cursor: pointer;
+}
+.habilitatodos[type=checkbox] + label:hover,
+.habilitatodos[type=checkbox]:checked + label {
+  border: solid 2px #00B0A0;
+  box-shadow: 4px 4px 2px -2px gray; /*0 0 1px #00B0A0;*/
+  /* Soften the jagged edge */
+}
+.habilitatodos[type=checkbox]:checked + label:after {
+  content: '\2714';
+  /*content is required, though it can be empty - content: '';*/
+  height: 1em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  color: #00B0A0;
+  line-height: 1;
+  font-size: 10px;
+  text-align: center;
+}
+
+.deshabilitatodos[type=checkbox] + label
+ {
+  position: relative;
+ /* background: url(http://i.stack.imgur.com/ocgp1.jpg) no-repeat;*/
+  height: 20px;
+  width: 20px;
+  /*margin: 0 auto;*/
+  /*float:left;*/
+  display: inline-block;
+  border-radius: 15%;
+  transition: box-shadow 0.4s, border 0.4s;
+  border: solid 1px #F00;
+  box-shadow: 0 0 1px #FFF;/* Soften the jagged edge */
+  cursor: pointer;
+}
+.deshabilitatodos[type=checkbox] + label:hover,
+.deshabilitatodos[type=checkbox]:checked + label {
+  border: solid 2px #F00;
+  box-shadow: 4px 4px 2px -2px gray; /*0 0 1px #00B0A0;*/
+  /* Soften the jagged edge */
+}
+.deshabilitatodos[type=checkbox]:checked + label:after {
+  content: '\2714';
+  /*content is required, though it can be empty - content: '';*/
+  height: 1em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  color: #F00;
+  line-height: 1;
+  font-size: 10px;
+  text-align: center;
+}
+
+.icoverd{
+	color:#00B09F;
+	font-size: 23px;	
+}
+
+
+.subtitulomenu{
+	font-size: 12px !important;
+	font-weight: 700;
+}	
+.iconoblanco{
+	color:#ffffff;
+}
+.iconoazul{
+	color:#0094D9;
+}
+
+.iconoverde{
+	color:#00B0A0;
+}
+.iconooro{
+	color:#F39C12;
+}
+.iconoladrillo{
+	color:#E67F22;
+}
+.iconomorado{
+	color:#853E8A;
+}
+.iconoocre{
+	color:#E67E22;
+}	
+.iconoverde{
+	color: #00A4B8;
+}
+
+.iconorojo{
+	color: #CE3537;
+}
+.tam32{
+	font-size: 32px !important;
+	font-weight: 700;
+}
+.tam23{
+	font-size: 23px !important;
+	font-weight: 700;
+}
+.sombratabla{
+	-webkit-box-shadow: 2px 2px 5px #999 !important;
+    -moz-box-shadow: 2px 2px 5px #999 !important;
+}
+.btnvisor{
+	position:relative; 
+	left:5%;
+	width:90%;
+	padding-left:1%;
+	background-color: #FAFCFE;
+	box-shadow: 5px 5px 5px #888888;
+	 border-radius: 5px;
+	/*border-top: solid #E8E8E8;
+	border-left: solid #E8E8E8;*/
+}
+
+.sombradiv{	
+	box-shadow: 5px 5px 5px #888888;
+}
+.btnvisormovil{
+	position:relative; 
+	left:3%;
+	width:30%;
+	padding-left:1%;
+}
+
+.btnvisorladoizq{
+	position:relative;
+	left:7%;
+	width:13%;
+	padding-left:3%;
+}
+
+.cargando {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
+	z-index: 9999999;
+}
+.fondomodal
+{
+	background-color: #000;
+	background: #ffffff;
+	height: 100%;
+	left: 0;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 9999;
+	opacity:0.5; 
+	display:none;         	
+}
+a.visor{
+	color: #2A94E7 !important;
+	text-decoration: underline !important;
+    -moz-text-decoration-color: #2A94E7 !important; /* Code for Firefox */
+    text-decoration-color: #2A94E7 !important;
+	
+}
+.habilitados[type=checkbox] + label
+ {
+  position: relative;
+ /* background: url(http://i.stack.imgur.com/ocgp1.jpg) no-repeat;*/
+  height: 25px;
+  width: 25px;
+  margin: 0 auto;
+  display: block;
+  border-radius: 15%;
+  transition: box-shadow 0.4s, border 0.4s;
+  border: solid 1px #FFF;
+  box-shadow: 0 0 1px #FFF;/* Soften the jagged edge */
+  cursor: pointer;
+}
+
+.vision[type=checkbox] + label{
+	 border: solid 2px #00B0A0 !important;
+     box-shadow: 4px 4px 2px -2px gray !important;
+}
+
+.negados[type=checkbox] + label
+ {
+  position: relative;
+ /* background: url(http://i.stack.imgur.com/ocgp1.jpg) no-repeat;*/
+  height: 25px;
+  width: 25px;
+  margin: 0 auto;
+  display: block;
+  border-radius: 15%;
+  transition: box-shadow 0.4s, border 0.4s;
+  border: solid 1px #FFF;
+  box-shadow: 0 0 1px #FFF;/* Soften the jagged edge */
+  cursor: pointer;
+}
+
+/* Provide a border when hovered and when the checkbox before it is checked */
+
+
+.habilitados[type=checkbox] + label:hover,
+.habilitados[type=checkbox]:checked + label {
+  border: solid 2px #00B0A0;
+  box-shadow: 4px 4px 2px -2px gray; /*0 0 1px #00B0A0;*/
+  /* Soften the jagged edge */
+}
+
+.negados[type=checkbox] + label:hover,
+.negados[type=checkbox]:checked + label {
+  border: solid 2px #F00;
+  box-shadow: 4px 4px 2px -2px gray;/*0 0 1px #F00;*/
+  /* Soften the jagged edge */
+}
+
+/* 
+- Create a pseudo element :after when checked and provide a tick
+- Center the content
+*/
+
+.habilitados[type=checkbox]:checked + label:after {
+  content: '\2714';
+  /*content is required, though it can be empty - content: '';*/
+  height: 1em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  color: #00B0A0;
+  line-height: 1;
+  font-size: 12px;
+  text-align: center;
+}
+
+.negados[type=checkbox]:checked + label:after {
+  content: '\2714';
+  /*content is required, though it can be empty - content: '';*/
+  height: 1em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  color: #F00;
+  line-height: 1;
+  font-size: 12px;
+  text-align: center;
+}
+.indicesub{
+	color: #00A4B8;
+	font-style: italic;
+	
+}
+.encuadre{
+	width:20% !important;	
+	
+}
+
+.clickble{
+	cursor: pointer;
+	
+}
+
+.titulop{
+	margin-top: 0px !important;
+	margin-bottom: 0px !important;
+}
+
+.subtitulop{
+	font-family: inherit !important;
+	font-weight: 500 !important;
+	line-height: 1.1 !important;
+	color: #333333 !important;
+	font-size: 24px;
+}
+
+/*.agrandar:hover{
+	-webkit-transform: scale(2);
+	transform: scale(2);
+	z-index:999;
+}*/
+
+.zoom1{
+
+        /* Aumentamos la anchura y altura durante 2 segundos */
+
+        transition: width 2s, height 2s, transform 2s;
+
+        -moz-transition: width 2s, height 2s, -moz-transform 2s;
+
+        -webkit-transition: width 2s, height 2s, -webkit-transform 2s;
+
+        -o-transition: width 2s, height 2s,-o-transform 2s;
+
+    }
+
+    .zoom1:hover{
+
+        /* tranformamos el elemento al pasar el mouse por encima al doble de
+
+           su tamaño con scale(2). */
+
+        transform : scale(1.1);
+
+        -moz-transform : scale(1.1);      /* Firefox */
+
+        -webkit-transform : scale(1.1);   /* Chrome - Safari */
+
+        -o-transform : scale(1.1);        /* Opera */
+        
+        z-index: 999999999;
+
+    }
+    
+.escogido{
+	opacity: 0.5;	
+}  
+
+.anchonotifica{
+	min-width: 550px !important;
+}
+
+.lizip:hover{
+    background-color: #CCE5ED;
+}

@@ -1,0 +1,671 @@
+<?php
+	@session_start();
+	$tablaid = $_REQUEST['tablaid']; 
+	$ruta = $_REQUEST['ruta'];  
+	$tiposdocumentales = $_REQUEST['tiposdocumentales'];
+	$idusuario = $_SESSION['idusuario'];
+	$tiposdocumentales = explode("_;_",@$tiposdocumentales);
+	$configdb = $ruta;  
+	
+	$sevearch= $_REQUEST['sevearch'];  
+	
+	
+	
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<html lang = 'esp'>
+	
+		<meta charset='utf-8'/>
+		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		
+		  <script type="text/javascript" charset="utf8" src="<?php echo $ruta;?>/js/jquery/jquery-1.8.2.min.js"></script>
+	
+		  <link rel="stylesheet" href="<?php echo $ruta;?>/assets/bootstrap/css/bootstrap.css">
+		  
+		  <script src="<?php echo $ruta;?>/js/bootstrap.min.js"></script>
+		  		  
+		  <link rel="stylesheet" type="text/css" href="<?php echo $ruta;?>/assets/widgets/multi-select/multiselect.css">
+	
+		  <link rel="stylesheet" type="text/css" href="<?php echo $ruta;?>/assets/widgets/tooltip/tooltip.css">
+		  
+		  <script type="text/javascript" src="<?php echo $ruta;?>/assets/widgets/multi-select/multiselect.js"></script>
+		  <script type="text/javascript" src="<?php echo $ruta;?>/js/quicksearch/jquery.quicksearch.js"></script>
+	
+		  <script type="text/javascript" src="<?php echo $ruta;?>/assets/widgets/tooltip/tooltip.js"></script>
+		
+		
+		<link rel="stylesheet" href="dist/themes/default/style.css" />
+		
+		<link rel="stylesheet" type="text/css" href="<?php echo $ruta;?>/assets/icons/fontawesome/fontawesome.css">
+		<link rel="stylesheet" type="text/css" href="<?php echo $ruta;?>/assets/icons/linecons/linecons.css">
+		<link rel="stylesheet" type="text/css" href="<?php echo $ruta;?>/css/estilo_powerfile.css">
+		
+		<link rel="stylesheet" type="text/css" href="<?php echo $ruta;?>/assets/widgets/popover/popover.css">
+		
+		<link rel="stylesheet" type="text/css" href="<?php echo $ruta;?>/assets/widgets/datatable/datatable.css">
+		
+		<script type="text/javascript" src="<?php echo $ruta;?>/assets/widgets/datatable/datatable.js"></script>
+		<script type="text/javascript" src="<?php echo $ruta;?>/assets/widgets/datatable/datatable-bootstrap.js"></script>
+		<script type="text/javascript" src="<?php echo $ruta;?>/assets/widgets/datatable/datatable-tabletools.js"></script>
+		
+		
+		<script src="dist/jstree.js"></script>
+		
+		
+		
+		<style>
+				html, body { background-color:#ffffff!important;font-size:10px; font-family:Verdana; margin:0; padding:0; }
+				#container { min-width:320px; margin:0px auto 0 auto; background:white; border-radius:0px; padding:0px; overflow:hidden; }
+				#tree { float:left; min-width:319px; border-right:1px solid silver; overflow:auto; padding:0px 0; }
+				#data { margin-left:320px; }
+				#data textarea { margin:0; padding:0; height:100%; width:100%; border:0; background:white; display:block; line-height:18px; }
+				#data, #code { font: normal normal normal 12px/18px 'Consolas', monospace !important; }
+				
+				#col-tpdoc ul {
+				  list-style: none;
+				  padding: 0;
+				}
+				#col-indices ul {
+				  list-style: none;
+				  padding: 0
+				}
+				#col-tpdoc li {
+				  padding-left: 1.3em;
+				  padding-top:0.5em;
+				  padding-bottom:0.5em;
+				}
+				#col-indices li {
+				  padding-left: 1.3em;
+				  padding-top:0.5em;
+				  padding-bottom:0.5em;
+				}
+				
+				#col-tpdoc li:hover {
+					  background: #B0E6FF;
+					}
+				#col-indices li:hover {
+					  background: #B0E6FF;
+					}
+				
+				
+				.divarbol {
+				    position:relative;
+				   	margin-top:1%;
+				    float:left;
+				    width:100% ;
+				    display:none;
+				}
+				.divtpdoc {
+					position:relative;
+					margin-top:1%;
+					float:left;
+					width:0%;
+					padding-right:5%;
+					display:none;
+				}
+				.divindice {
+					position:relative;
+					margin-top:1%;
+					float:left;
+					width:0%;
+					display:none;
+				}
+						
+				td { text-align: center; }
+				.jstree-anchor{
+					text-shadow: 5px 5px 5px #aaa;
+				}
+		</style>
+	<head>	
+	<body id="elcuerpotree" style="background-color:#ffffff !important;font-size:13px !important">
+	
+	
+	
+		<div id="container" role="main">
+		    <!-- div class="col-sm-3" >
+		    	<input type="text" class="form-control input-sm" placeholder="Buscar..." id="searchText" name="searchText"/>
+		    </div-->
+
+			<div style="width: 100%;margin-top:2.5%;margin-bottom:5%;">  
+				<table width="100%" border="1">
+					<tr style="background-color: #0365AF;color:#ffffff">
+						<td width="30%" style="padding:0 15px 0 15px;font-size:1.3em">&nbsp;</td>
+						<td width="70%" style="padding:0 15px 0 15px;font-size:1.3em">&nbsp;</td>
+					</tr>
+				</table>
+				
+				<div id="tree-container" class="divarbol"></div>
+				<div id="data">
+					<div class="content code" style="display:none;"><textarea id="code" readonly="readonly"></textarea></div>
+					<div class="content folder" style="display:none;"></div>
+					<div class="content image" style="display:none; position:relative;"><img src="" alt="" style="display:block; position:absolute; left:50%; top:50%; padding:0; max-height:90%; max-width:90%;" /></div>
+					<div class="content default" style="text-align:center;"></div>
+				</div>
+				<div id="col-tpdoc" class="divtpdoc" style="width:80%">documentales</div>
+				<div id="col-indices" class="divindice">indices</div>
+			</div>			
+			<br>
+		</div>
+		<div id="resultados" style="width: 100%;margin-top:2.5%"></div>
+	</body>
+	
+<script type="text/javascript">
+		var indicescrudos = '';
+		var nodeact = 0;
+		var nodeactindice = 0;
+		$(document).ready(function(){ 
+		    
+			//e cargan los indices existentes de la tabla sgd_indices
+			var enlacerecep = 'cargalo_extendido.php?otraoperation=dameindicesall'+'&configdb='+configdb;      
+			$.ajax({
+				   type: "GET",
+				   async:false, 
+				   url: enlacerecep,
+				   success: function(msg){       
+				   	   indicescrudos = msg;
+					   $('#id_tipodoc_indice').html(msg);
+				   },
+					error: function(x,err,msj){alert('carga '+msj) }
+				  });	
+			//se blanquea el fondo del arbol
+		    $(function(){
+		        $('body').css('background-color', '#ffffff !important');
+		    });
+
+		    $( "#elcuerpotree" ).click(function() {  	
+			    $(".jstree-node").each(function(){  
+		       		  var idnode = $(this).attr('id'); 
+		       		  $('#'+idnode+'_anchor').attr('onclick','verdocumental('+idnode+')');	
+		    		});	
+		    });	
+
+		  //se arma el arbol si no hay ningun registro para esa tabla 
+		    var enlacerecep = 'cargalo_extendido.php?otraoperation=arbol_extendido'+'&configdb='+configdb;      
+			$.ajax({
+				   type: "GET",
+				   async:false, 
+				   url: enlacerecep,
+				   success: function(msg){  
+						//se verifica si el div de tipodoc esta visible
+						//alert(msg);
+						
+				   },
+					error: function(x,err,msj){ }
+				  });
+		    
+ 
+		});		
+
+			$(function() { "use strict";
+	        $(".multi-select").multiSelect({
+	        	  selectableHeader: "<input type='text' class='search-input form-control' autocomplete='off' placeholder='Buscar...'>",
+	        	  selectionHeader: "<input type='text' class='search-input form-control' autocomplete='off' placeholder='Buscar...'>",
+	        	  afterInit: function(ms){
+	        	    var that = this,
+	        	        $selectableSearch = that.$selectableUl.prev(),
+	        	        $selectionSearch = that.$selectionUl.prev(),
+	        	        selectableSearchString = '#'+that.$container.attr('id')+' .ms-elem-selectable:not(.ms-selected)',
+	        	        selectionSearchString = '#'+that.$container.attr('id')+' .ms-elem-selection.ms-selected';
+	
+	        	    that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+	        	    .on('keydown', function(e){
+	        	      if (e.which === 40){
+	        	        that.$selectableUl.focus();
+	        	        return false;
+	        	      }
+	        	    });
+	
+	        	    that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+	        	    .on('keydown', function(e){
+	        	      if (e.which == 40){
+	        	        that.$selectionUl.focus();
+	        	        return false;
+	        	      }
+	        	    });
+	        	  },
+	        	  afterSelect: function(){
+	        	    this.qs1.cache();
+	        	    this.qs2.cache();
+	        	  },
+	        	  afterDeselect: function(){
+	        	    this.qs1.cache();
+	        	    this.qs2.cache();
+	        	  }
+	        	});
+	        $(".ms-container").append('<i ><img class="img-circle" width="25" src="<?php echo $ruta;?>/img/17858-200.png" alt="" style="position:relative;left: 3%;margin-top: 20% !important;"></i>');
+	    });
+
+			//fill data to tree  with AJAX call
+		    var tablaid = '<?php echo $tablaid;?>';    
+		    var configdb = '<?php echo $configdb;?>';    
+		    var ruta = '<?php echo $ruta;?>'; 
+		    $('#tree-container').jstree({
+			    
+					'types': {
+						'#' : {
+						    'valid_children' : ['home']
+						    },
+					    'home' : {
+				        	'icon': ruta+'/img/icono_root.png',
+				            "valid_children" : ["default"]
+				          },    
+			            'selectable': {
+			                'icon': ruta+'/img/icono_default.png'
+			            },
+			            'default': {
+			                'icon': ruta+'/img/icono_default.png'
+			            },
+			            "file" : {
+			                "icon" : "glyphicon glyphicon-file",
+			              },
+			            
+			        },///types
+			       
+						
+						'core' : {
+							'data' : {
+									'url' : 'cargalo_extendido.php?operation=get_node&tablaid='+tablaid+'&configdb='+configdb,
+									'data' : function (node) {
+										return { 'id' : node.id };
+									}
+								},
+							'check_callback' : true,
+							'themes' : {
+								'responsive' : false
+							}
+						},
+						'force_text' : true,
+						"state": { "opened" : false },
+						'plugins' : ['wholerow']
+					})
+					.on('create_node.jstree', function (e, data) { 
+						
+						  $.get('cargalo_extendido.php?operation=create_node&tablaid='+tablaid+'&configdb='+configdb, { 'id' : data.node.parent, 'position' : data.position, 'text' : data.node.text})
+							.done(function (d) {   
+							  data.instance.set_id(data.node, d.id);
+							})
+							.fail(function () {
+							  data.instance.refresh();
+							});
+						}) 
+					.on('rename_node.jstree', function (e, data) { 
+						  $.get('cargalo_extendido.php?operation=rename_node'+'&configdb='+configdb, { 'id' : data.node.id, 'text' : data.text  })
+						  .done(function (d) {   
+							  data.instance.refresh();
+							})
+							.fail(function () {
+							  data.instance.refresh();
+							});
+						})	
+					.on('delete_node.jstree', function (e, data) {  
+						  $.get('cargalo_extendido.php?operation=delete_node'+'&configdb='+configdb, { 'id' : data.node.id })
+							.fail(function () {
+							  data.instance.refresh();
+							});
+						});	
+
+		    
+	    function armador() { //le coloca el disparador a los nodos 
+
+		    	$(".jstree-node").each(function(){  
+		       		  var idnode = $(this).attr('id'); 
+		       		  $('#'+idnode+'_anchor').attr('onclick','verdocumental('+idnode+')');			
+		       		  var textov = $('#'+idnode+'_anchor').text();
+		       		  $('#'+idnode+'_anchor').html('<i class="glyphicon glyphicon-folder-open iconomorado" role="presentation"></i>&nbsp;'+textov);
+		       		  
+		    		});	
+				//se recorre de nuevo para verificar que tengan el atributo
+				var nicon = 0;
+				$(".jstree-node").each(function(){ 
+					  nicon = nicon + 1;	 
+		       		  var idnode = $(this).attr('id'); 
+		       		  if ($('#'+idnode+'_anchor').attr('onclick') != '' )
+		       		  	{
+		       				window.clearInterval(repeticion);
+		       				$('.jstree-icon').addClass('sombraicono');
+		       				$('#tree-container').fadeIn('slow');
+		       				$('#tituloarbol').fadeIn('slow');
+		       		  	} 		       		 
+		    		});
+	    	}
+		
+
+		    
+		function verdocumental(idnode){
+				var configdb = '<?php echo $configdb;?>'; 
+				
+				//se buscan los datoas de los tipos documentales				
+					 if (nodeact != idnode)
+					 	{
+
+							//buscamos los id de los indices de este node
+							
+							var enlacerecep = 'cargalo_extendido.php?otraoperation=darindicesxnode'+'&id_carpeta='+idnode+'&configdb='+configdb;      
+							$.ajax({
+								   type: "GET",
+								   async:false, 
+								   url: enlacerecep,
+								   success: function(msg){      
+									   window.parent.colocaind(msg);	  
+								   },
+									error: function(x,err,msj){alert('verdoc '+msj) }
+								  });
+						 	nodeact = idnode;
+							//buscamos documentos de ese nodo
+						 	var enlacerecep = 'cargalo_extendido.php?otraoperation=dameidicesbuscar'+'&id_carpeta='+idnode+'&configdb='+configdb;      
+							$.ajax({
+								   type: "GET",
+								   async:false, 
+								   url: enlacerecep,
+								   success: function(msg){       
+									   $('#col-tpdoc').html(msg);
+								   },
+									error: function(x,err,msj){alert('verdoc '+msj) }
+								  });
+
+							//se verifica si esta o no visible
+							if ($("#col-tpdoc").css('display') == 'none' ) 
+						 		{  
+									$('#tituloarbol').width('40%'); 
+						 			$('#tree-container').width('30%');
+						 			$('#col-tpdoc').width('60%');						 			
+									$("#col-tpdoc").fadeIn('slow');			
+									//se muestra el buscar
+									window.parent.verbsucar(1,idnode);	
+												
+						 		}
+					 	}
+					 else
+					 	{	 	
+						 	 $('#col-tpdoc').html('');
+						 	 nodeact = 0;
+							 if ($("#col-tpdoc").css('display') != 'none' ) 
+						 		{  
+									$("#col-tpdoc").fadeOut('slow');	
+									$('#tree-container').width('100%');
+									$('#tituloarbol').width('100%'); 
+						 			$('#col-tpdoc').width('0%');		
+									//se oculta el buscar
+						 			window.parent.verbsucar(2,idnode);
+						 				
+						 		}
+					 	} 		
+					 $('#col-indices').html('');
+					 nodeactindice = 0;
+					if ($("#col-indices").css('display') != 'none') 
+					 {  
+						$("#col-indices").fadeOut('slow');
+						$('#col-indices').width('0%');	
+					 }	
+	
+					$('#datatable-expediente').dataTable({"iDisplayLength": -1,"aLengthMenu": [[5, 10, 25, 50,100, -1], [5, 10, 25, 50,100, "Todos"]],"aaSorting": [[0, "asc"]],"aoColumnDefs": [{ 'bSortable': false, 'aTargets': [0,1]}]});
+					 			 	 	
+		}
+
+	//para el filtro de busqueda 
+	
+	function filtrardoc(idnode,buscar){   
+		
+				var configdb = '<?php echo $configdb;?>';   
+				 
+				var nodeact = 0;
+				
+				//se buscan los datoas de los tipos documentales				
+					 if (nodeact != idnode)
+					 	{
+						 	nodeact = idnode;
+							//buscamos los indices de ese nodo
+						 	var enlacerecep = 'cargalo_extendido.php?otraoperation=dameidicesbuscar'+'&id_carpeta='+idnode+'&configdb='+configdb+'&dabuscar='+buscar;      
+							$.ajax({
+								   type: "GET",
+								   async:false, 
+								   url: enlacerecep,
+								   success: function(msg){      
+									   $('#col-tpdoc').html(msg);
+
+									  
+								   },
+									error: function(x,err,msj){alert('verdoc '+msj) }
+								  });
+
+							//se verifica si esta o no visible
+							if ($("#col-tpdoc").css('display') == 'none' ) 
+						 		{  
+									$('#tituloarbol').width('40%'); 
+						 			$('#tree-container').width('30%');
+						 			$('#col-tpdoc').width('60%');						 			
+									$("#col-tpdoc").fadeIn('slow');			
+									//se muestra el buscar
+									window.parent.verbsucar(1,idnode);	
+												
+						 		}
+					 	}
+					 else
+					 	{	 	
+						 	 $('#col-tpdoc').html('');
+						 	 nodeact = 0;
+							 if ($("#col-tpdoc").css('display') != 'none' ) 
+						 		{  
+									$("#col-tpdoc").fadeOut('slow');	
+									$('#tree-container').width('100%');
+									$('#tituloarbol').width('100%'); 
+						 			$('#col-tpdoc').width('0%');		
+									//se oculta el buscar
+						 			window.parent.verbsucar(2,idnode);
+						 				
+						 		}
+					 	} 		
+					 $('#col-indices').html('');
+					 nodeactindice = 0;
+					if ($("#col-indices").css('display') != 'none') 
+					 {  
+						$("#col-indices").fadeOut('slow');
+						$('#col-indices').width('0%');	
+					 }	
+	
+		 	$('#datatable-expediente').dataTable({"iDisplayLength": -1,"aLengthMenu": [[5, 10, 25, 50,100, -1], [5, 10, 25, 50,100, "Todos"]],"aaSorting": [[0, "asc"]],"aoColumnDefs": [{ 'bSortable': false, 'aTargets': [0,1]}]});
+					 			 	 	
+		}
+
+	function filtrardocxind(idnode,vindicesid,vindicesvalor){    
+			
+			var configdb = '<?php echo $configdb;?>';   
+			 
+			var nodeact = 0;
+			
+			//se buscan los datoas de los tipos documentales				
+				 if (nodeact != idnode)
+				 	{
+					 	nodeact = idnode;
+
+					 	if ($.trim(vindicesid) != '')
+							{	
+
+							 	$(".lineadocumental").hide();
+		
+							 	//obtenemos el numero de valores a buscar
+		
+							 	vindicesvalor = vindicesvalor.split(','); 
+
+							 	vindicesid = vindicesid.split(','); 
+		
+							 	var tindices = vindicesvalor.length;
+		
+							 	tindices = tindices - 1;
+							 	
+							 	$(".lineadocumental").each(function(){   
+		
+								 		var ctlb = 0;
+								 		
+							 			var id = $(this).attr('id');  
+							 											
+										var cdatind = $('#'+id).attr('data-valordeindices');
+
+										var vdatind = $('#'+id).attr('data-vindices');
+		
+										var vcdatind = new Array();
+
+										var vvdatind = new Array();
+		
+										vcdatind.length = 0
+
+										vvdatind.length = 0;
+		
+										vcdatind = cdatind.split(',');      
+
+										vvdatind = vdatind.split(',');    
+
+										var tvcdatind = vcdatind.length;
+										
+										tvcdatind = tvcdatind - 1;
+		
+										for (var i=0; i < tindices; i++)
+										 	{
+										 		
+
+												for (var z=0; z < tvcdatind; z++)
+												 	{
+												 		
+												 		
+														if ( vcdatind[z].toString().indexOf( vindicesvalor[i] ) != -1 )
+															{
+																
+																if (vvdatind[z] == vindicesid[i])
+																	{
+																		ctlb =  ctlb + 1;
+																	}	
+															}
+												 	}
+													
+												
+											}
+										if (ctlb == tindices)
+											{
+												$('#'+id).show();
+											}
+								     });
+		
+								/*//buscamos los indices de ese nodo
+							 	var enlacerecep = 'cargalo_extendido.php?otraoperation=dameidicesbuscarxind'+'&id_carpeta='+idnode+'&configdb='+configdb+'&vindicesid='+vindicesid+'&vindicesvalor='+vindicesvalor;      
+								//alert(enlacerecep);
+					
+								$.ajax({
+									   type: "GET",
+									   async:false, 
+									   url: enlacerecep,
+									   success: function(msg){      
+										   $('#col-tpdoc').html(msg);
+			
+										  
+									   },
+										error: function(x,err,msj){alert('verdoc '+msj) }
+									  });*/
+			
+								//se verifica si esta o no visible
+								if ($("#col-tpdoc").css('display') == 'none' ) 
+							 		{  
+										$('#tituloarbol').width('40%'); 
+							 			$('#tree-container').width('30%');
+							 			$('#col-tpdoc').width('80%');						 			
+										$("#col-tpdoc").fadeIn('slow');			
+										//se muestra el buscar
+										window.parent.verbsucar(1,idnode);	
+													
+							 		}
+							}		
+					 	else
+					 		{
+
+					 			$(".lineadocumental").show();
+
+					 		}
+				 	}
+				 else
+				 	{	 	
+					 	 $('#col-tpdoc').html('');
+					 	 nodeact = 0;
+						 if ($("#col-tpdoc").css('display') != 'none' ) 
+					 		{  
+								$("#col-tpdoc").fadeOut('slow');	
+								$('#tree-container').width('100%');
+								$('#tituloarbol').width('100%'); 
+					 			$('#col-tpdoc').width('0%');		
+								//se oculta el buscar
+					 			window.parent.verbsucar(2,idnode);
+					 				
+					 		}
+				 	} 		
+				 $('#col-indices').html('');
+				 nodeactindice = 0;
+				if ($("#col-indices").css('display') != 'none') 
+				 {  
+					$("#col-indices").fadeOut('slow');
+					$('#col-indices').width('0%');	
+				 }	
+
+			$('#examdatatable-expedienteple').DataTable( {
+			    destroy: true,
+			    searching: false
+			} );			 	
+						 	
+		 //	$('#datatable-expediente').dataTable({"iDisplayLength": 10,"aLengthMenu": [[5, 10, 25, 50,100, -1], [5, 10, 25, 50,100, "Todos"]],"aaSorting": [[0, "asc"]],"aoColumnDefs": [{ 'bSortable': false, 'aTargets': [0,1]}]});
+				 			 	 	
+	}
+		
+	function buscarav(){  
+		var configdb = '<?php echo $configdb;?>';
+		var containput = 0;
+		var dabuscar = '';
+		$(".inputindice").each(function(){  
+     		  var idnode = $(this).attr('id'); 
+     		  if ($('#'+idnode).val() != '')
+     		  	{
+     			  containput = containput + 1;
+				  var datoid = $('#'+idnode).attr('data-indice');
+				  var valor = $('#'+idnode).val();
+				  dabuscar += 	datoid+'_,_'+valor+'_;_';
+     		  	}       		  
+  		});	
+		//se genera la busqueda y se monta en el div de resultados
+		if (containput > 0)
+			{
+				var enlacerecep = 'cargalo_extendido.php?otraoperation=armarlistado'+'&dabuscar='+dabuscar+'&configdb='+configdb;      
+				$.ajax({
+					   type: "GET",
+					   async:false, 
+					   url: enlacerecep,
+					   success: function(msg){       
+						   $("#resultados").html(msg);
+					   },
+						error: function(x,err,msj){alert('buscarv'+msj) }
+					  });
+
+			}
+	}	    
+
+function visordocumentohijo(id_documento){  
+
+	var sevearch = '<?php echo $sevearch;?>'; 
+	if (sevearch == '1')
+		{
+			window.parent.Dios(id_documento);
+		}
+	else
+		{
+			if (sevearch == '0')
+				{	
+					alert('Unable to connect to ftp');
+				}	
+		}		
+		
+}
+	
+
+	
+	
+	 var repeticion =  window.setInterval("armador()",3000);
+</script>
+</html>
