@@ -2539,7 +2539,7 @@ class ApidocumentosController extends Controller
 					if( $b64 != '' and $nombrear != '' and $extensionarch != '' and $id_tipodoc != '')
 						{
 							
-								//buscamos la llave de encriptación
+								//buscamos la llave de encriptaciï¿½n
 								
 								if ($driver != 'pgsql')
 									{
@@ -2594,6 +2594,22 @@ class ApidocumentosController extends Controller
 											}
 									}
 									
+								//se busca el nombre del tipo documental
+								
+									if ($driver != 'pgsql')
+										{
+											$dattpdocnom = DB::select('select nombre from '.$workspaceinput.'.sgd_tipodocumentales  where  id_tipodoc = '.$id_tipodoc);
+										}
+									else
+										{
+											if ($driver == 'pgsql')
+												{
+													$dattpdocnom= DB::select('select nombre from '.$workspaceinput.'.public.sgd_tipodocumentales  where  id_tipodoc = '.$id_tipodoc);
+												}
+										}
+									
+								$dattpdocnom = $dattpdocnom[0]->nombre;
+								
 								if (count($haydocumetn) == 0)
 									{
 										//se registran los datos
@@ -2620,7 +2636,7 @@ class ApidocumentosController extends Controller
 											{
 												if ($driver == 'pgsql')
 													{
-														DB::table($workspaceinput.'.public.sgd_documentos')->insert(
+														DB::table($workspaceinput.'.public.sgd_documentos')->insert( 
 																array(
 																		'id_expediente'     	=>  $id_expediente,
 																		'id_tipodocumental'   	=>  $id_tipodoc,
@@ -2654,11 +2670,19 @@ class ApidocumentosController extends Controller
 										
 										$iddocumento= $ciddocum[$tregiddocum]->id_documento;
 										
-										//se registran los valores indices
+										//se registran los valores indices  
+										
+										$nomindicesb = array();
 										
 										for ( $i = 0 ; $i < $totalindices ; $i ++)
 											{
 												$valord = $valor[$i];
+												
+												//se buscan los nombres de los indices
+												
+												
+												
+												
 												
 												if ($i == 0)
 													{
@@ -2666,6 +2690,11 @@ class ApidocumentosController extends Controller
 													}
 												if ($driver != 'pgsql')
 													{
+														
+														$lnomindices = DB::select('select nombre from '.$workspaceinput.'.sgd_indices  where id_indice = '.$vidindices[$i]);
+														
+														$nomindicesb[] =  $lnomindices[0]->nombre;
+														
 														DB::table($workspaceinput.'.sgd_valorindice')->insert(
 																array(
 																		'id_documento'     	=>  $iddocumento,
@@ -2680,6 +2709,10 @@ class ApidocumentosController extends Controller
 													{
 														if ($driver == 'pgsql')
 															{
+																$lnomindices = DB::select('select nombre from '.$workspaceinput.'.public.sgd_indices  where id_indice = '.$vidindices[$i]);
+																
+																$nomindicesb[] =  $lnomindices[0]->nombre;
+																
 																DB::table($workspaceinput.'.public.sgd_valorindice')->insert(
 																		array(
 																				'id_documento'     	=>  $iddocumento,
@@ -2906,10 +2939,10 @@ class ApidocumentosController extends Controller
 															
 															//se crea la bodega si no existe  en ftp
 															
-															// establecer una conexión o finalizarla
+															// establecer una conexiï¿½n o finalizarla
 															$conn_id = ftp_connect($ftp_server,$ftp_port) or die("No se pudo conectar a $ftp_server");
 															
-															// intentar iniciar sesión
+															// intentar iniciar sesiï¿½n
 															if (@ftp_login($conn_id, $ftp_user, $ftp_pass))
 																{
 																	$ftpconectado = true;
@@ -2998,10 +3031,10 @@ class ApidocumentosController extends Controller
 														
 														//se crea la bodega si no existe  en ftp
 														
-														// establecer una conexión o finalizarla
+														// establecer una conexiï¿½n o finalizarla
 														$conn_id = ftp_connect($datoftp_recovery_server,$datoftp_recovery_port) or die("No se pudo conectar a $datoftp_recovery_server");
 														
-														// intentar iniciar sesión
+														// intentar iniciar sesiï¿½n
 														if (@ftp_login($conn_id, $datoftp_recovery_user, $datoftp_recovery_pass))
 															{
 																$ftpconectado = true;
@@ -3263,6 +3296,47 @@ class ApidocumentosController extends Controller
 										if ($idimagen > 0)
 											{
 												
+												if ($driver != 'pgsql')
+													{
+														DB::table($workspaceinput.'.sgd_search')->insert(   //$id_expediente $id_tipodoc $id_usuario $id_tabla $id_folder $vidindices  $valor
+																array(
+																		'id_documento'     	=>  $id_documento,
+																		'id_expediente'   			=>  $id_expediente,
+																		'id_tipodocumental' 		=>	$dattpdocnom,
+																		'id_node' 		=> 	$id_folder,
+																		'id_tabla' =>	$id_tabla,
+																		'id_indices' => implode(",",$nomindicesb), 
+																		'nombre' =>  $nombrear,
+																		'search' =>  implode(",",$valor),
+																		'usuarios' => $id_usuario,
+																		'id_estado'			=> 	1,
+																		'created_at'			=> date("Y-m-d H:m:s")
+																)
+															);
+													}
+												else
+													{
+														if ($driver == 'pgsql')
+														{
+															DB::table($workspaceinput.'.public.sgd_search')->insert(
+																	array(
+																			'id_documento'     	=>  $id_documento,
+																			'id_expediente'   			=>  $id_expediente,
+																			'id_tipodocumental' 		=>	$dattpdocnom,
+																			'id_node' 		=> 	$id_folder,
+																			'id_tabla' =>	$id_tabla,
+																			'id_indices' => implode(",",$nomindicesb),
+																			'nombre' =>  $nombrear,
+																			'search' =>  implode(",",$valor),
+																			'usuarios' => $id_usuario,
+																			'id_estado'			=> 	1,
+																			'created_at'			=> date("Y-m-d H:m:s")
+																	)
+																);
+														}
+													}
+												
+												
 														
 														$dir = public_path('img/tempo/'.$espaciotrabajo);
 														
@@ -3294,6 +3368,8 @@ class ApidocumentosController extends Controller
 														$dimagenes = json_encode($vimagenes);
 														
 														//se mueven los archivos hacia el storage respectivo
+														
+														//dd($configdb.'/treepowerfile2/cargalo_documentos.php?otraoperation=grabastorage&dir='.$dir.'&configdb='.$configdb.'&workspace='.$workspaceinput.'&dimagenes='.$dimagenes.'&nombreb='.$nombreb);
 														
 														$page = file_get_contents($configdb.'/treepowerfile2/cargalo_documentos.php?otraoperation=grabastorage&dir='.$dir.'&configdb='.$configdb.'&workspace='.$workspaceinput.'&dimagenes='.$dimagenes.'&nombreb='.$nombreb);
 														

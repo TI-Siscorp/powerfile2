@@ -1267,7 +1267,7 @@ if(isset($_REQUEST['otraoperation'])) {
 									
 									$cabezabsftplong = "/storage/app/bodegas/".$dbname;
 									
-									$ruta_bodegasftp = '/storage/app/bodegas/'.$dbname.'/';  
+									$ruta_bodegasftp = 'storage/app/bodegas/'.$dbname.'/';  
 									
 									
 									
@@ -13943,6 +13943,24 @@ if(isset($_REQUEST['otraoperation'])) {
 												// cerrar la conexiï¿½n ftp
 												ftp_close($conn_id);
 											}
+										else
+											{
+												if ($modobodega == 'SFTP')
+													{
+														$sftp = new Net_SFTP($datoftp_server,$datoftp_port);
+														
+														$local_file = $ruta_bodega.$labodega."/".$vlasimg[0].'_.dat';
+														
+														$server_file = $ruta_bodegasftp.$vlasimg[0].'_.dat';  
+														
+														if (!$sftp->login($datoftp_user, $datoftp_pass))
+															{
+																exit('Login Failed');
+															}
+														$sftp->get($server_file, $local_file);
+															
+													}	
+											}	
 											
 										inFTP($vlasimg[0].'_.'.$vlaext[0],$ruta_bodega.$labodega,$ruta_temp,$kweyllave);
 										
@@ -18085,7 +18103,7 @@ if(isset($_REQUEST['otraoperation'])) {
 											}
 									}
 							}
-				unlink($fichero); //se  el archvivo
+				//unlink($fichero); //se  el archvivo
 				}
 			break;
 			
@@ -21558,122 +21576,6 @@ if(isset($_REQUEST['otraoperation'])) {
 				$ctlvalidado = 0;
 				
 				$numarchzip = 0; 
-<<<<<<< cargalo_documentos.php
-			
-				//primara validación se verifica si es con busqueda = 2 que existan dos archivos zip
-				
-				/*if ($conbusqueda == 2)
-					{		
-						while (($archivo = readdir($directorio)) !== false)//obtenemos un archivo y luego otro sucesivamente
-								{
-									if (is_dir($archivo))//verificamos si es o no un directorio
-										{
-											
-											
-										}
-									else
-										{
-											//echo $archivo;
-											
-											$nombrear2 = explode('.',$archivo);
-											
-											$nombrear = $nombrear2[0];
-											
-											$file_ext = strtolower($nombrear2[1]);
-											
-											if ($file_ext == 'zip' or $file_ext == 'ZIP')
-												{
-													$numarchzip = $numarchzip + 1;
-												}	
-										}	
-								}
-							if ($numarchzip < 2)
-								{
-									// no cumple la condicionn de que son dos zip se aborta el proces	
-									echo json_encode((['status'=>'error','code'=>205,'message'=>'There is only one zip file, there must be two']));
-									exit;
-								}	
-						}	*/
-					
-				//validación de pares de archivos para su ejecucion en leaseplan
-				
-				if ($conbusqueda == 2)
-					{	
-				
-						$vbatch = array();
-						
-						$vvehno = array();
-						
-						while (($archivo = readdir($directorio)) !== false)//obtenemos un archivo y luego otro sucesivamente
-							{
-								if (is_dir($archivo))//verificamos si es o no un directorio
-									{
-										
-										
-									}
-								else
-									{
-										
-										$vtempobatch = explode('batch',$archivo);
-										
-										if (count($vtempobatch) == 2)
-											{
-												//es el archivo de carga
-												
-												$vbatch[] =  $archivo;
-												
-											}
-										
-										$vtempovehno = explode('vehno',$archivo);
-										
-										if (count($vtempovehno) == 2)
-											{
-												//es el archivo de carga
-												
-												$vvehno[] =  $archivo;
-												
-											}
-									}
-							}
-											
-						if (count($vbatch) != count($vvehno))
-							{
-								// no cumple la condicionn de que son dos zip se aborta el proces
-								echo json_encode((['status'=>'error','code'=>205,'message'=>'There is only one zip file, there must be two']));
-								exit;
-							}
-						else 
-							{
-								
-								$ctlubica = 0;
-								// se recorre el primer arreglo y se busca el primer dato de num en el segundo
-								for ($i = 0; $i <count($vbatch); $i++)
-									{
-										
-										$vtemp = explode('batch',$vbatch[$i]);
-										
-										//recorro el segundo y busco su coincidencia
-										
-										for ($j = 0; $j <count($vvehno); $j++)
-											{
-												$vtempv = explode('vehno',$vvehno[$j]);
-												
-												if ($vtemp[0] == $vtempv[0])
-													{
-														$ctlubica = $ctlubica + 1;
-													}
-												
-											}
-									}
-								if ($ctlubica != count($vbatch))
-									{
-										echo json_encode((['status'=>'error','code'=>205,'message'=>'Zip names do not match']));
-										exit;
-									}
-							}	
-					}	
-=======
->>>>>>> 1.121
 					
 					$vectindimagen = array();
 					
@@ -25052,21 +24954,6 @@ if(isset($_REQUEST['otraoperation'])) {
 														
 														$contl = 0;
 														
-<<<<<<< cargalo_documentos.php
-														if ($contl > 1)
-																{
-																	
-																	
-																	/*//se busca el dato de la columna 0 en la tabla de indices para tomar el id del documento
-																	
-																	$sql  = "SELECT  id_documento FROM sgd_valorindice WHERE valor = '".$data[0]."'";  //echo $sql;
-																	
-																	$iddocumentozip = 0;
-																	
-																	$eliddoc = 0;
-																	
-																	if ($configdb[0] == 'mysql')
-=======
 														$errortpdoc = 0;
 														
 														
@@ -25098,33 +24985,14 @@ if(isset($_REQUEST['otraoperation'])) {
 																	@$cuantosi = @mysql_num_rows($qeryvd);
 																	
 																	if ($cuantosi > 0)
->>>>>>> 1.121
 																	{
-<<<<<<< cargalo_documentos.php
-																		$qeryvd =  mysql_query($sql,$conn);
-=======
 																		
 																		$iddocumentozip = @mysql_fetch_assoc($qeryvd);
->>>>>>> 1.121
 																		
-																		@$cuantosi = @mysql_num_rows($qeryvd);
+																		$eliddoc = $iddocumentozip['id_documento'];
 																		
-																		if ($cuantosi > 0)
-																			{
+																		$iddocumentozip = $data[1];   //$iddocumentozip['id_documento'];
 																		
-<<<<<<< cargalo_documentos.php
-																				$iddocumentozip = @mysql_fetch_assoc($qeryvd);
-																				
-																				$eliddoc = $iddocumentozip['id_documento'];
-																				
-																				$iddocumentozip = $data[1];   //$iddocumentozip['id_documento'];
-																				
-																			}	
-																	}
-																	else
-																	{
-																		if ($configdb[0] == 'pgsql')
-=======
 																	}
 																}
 																else
@@ -25139,32 +25007,12 @@ if(isset($_REQUEST['otraoperation'])) {
 																		@$cuantosi = @pg_num_rows(qeryvd);
 																		
 																		if ($cuantosi> 0)
->>>>>>> 1.121
 																		{
-<<<<<<< cargalo_documentos.php
-																			$qeryvd =  pg_query($conn,$sql);
-																			
-																			@$cuantosi = @pg_num_rows(qeryvd);
-=======
 																			
 																			$iddocumentozip = pg_fetch_assoc($qeryvd);
->>>>>>> 1.121
 																			
-																			if ($cuantosi> 0)
-																				{
+																			$eliddoc = $iddocumentozip['id_documento'];
 																			
-<<<<<<< cargalo_documentos.php
-																					$iddocumentozip = pg_fetch_assoc($qeryvd);
-																					
-																					$eliddoc = $iddocumentozip['id_documento'];
-																					
-																					$iddocumentozip = $data[1];  //$iddocumentozip['id_documento'];
-																				}	
-																		}
-																		else
-																		{
-																			if (trim($configdb[0]) == 'sqlsrv')
-=======
 																			$iddocumentozip = $data[1];  //$iddocumentozip['id_documento'];
 																		}
 																	}
@@ -25177,108 +25025,11 @@ if(isset($_REQUEST['otraoperation'])) {
 																			$qeryvd =  sqlsrv_query($conn,$sql);
 																			
 																			while( $row = sqlsrv_fetch_array( $qeryvd, SQLSRV_FETCH_ASSOC ))
->>>>>>> 1.121
 																			{
-																				$qeryvd =  sqlsrv_query($conn,$sql);
+																				$iddocumentozip = $row['id_documento'];
 																				
-																				while( $row = sqlsrv_fetch_array( $qeryvd, SQLSRV_FETCH_ASSOC ))
-																					{
-																						$iddocumentozip = $row['id_documento'];
-																						
-																						$eliddoc = $row['id_documento'];
-																					}
-																				if ($iddocumentozip > 0)
-																					{
-																						$iddocumentozip = $data[1]; 
-																					}
+																				$eliddoc = $row['id_documento'];
 																			}
-<<<<<<< cargalo_documentos.php
-																		}
-																	}*/
-																	
-																	$iddocumentozip = 0;
-																	
-																	$eliddoc = 0;
-																	
-																	if ($configdb[0] == 'mysql')
-																		{
-																			
-																			$sql  = "SELECT  id_documento FROM sgd_valorindice  WHERE valor = '".$data[0]."' ORDER BY id_valorindice DESC limit 1";
-																			
-																			$qeryvd =  mysql_query($sql,$conn);
-																			
-																			@$cuantosi = @mysql_num_rows($qeryvd);
-																			
-																			if ($cuantosi > 0)
-																				{
-																					
-																					$iddocumentozip = @mysql_fetch_assoc($qeryvd);
-																					
-																					$eliddoc = $iddocumentozip['id_documento'];
-																					
-																					$iddocumentozip = $data[1];   //$iddocumentozip['id_documento'];
-																					
-																				}
-																		}
-																	else
-																		{
-																			if ($configdb[0] == 'pgsql')
-																				{
-																					
-																					$sql  = "SELECT  id_documento FROM sgd_valorindice  WHERE valor = '".$data[0]."' ORDER BY id_valorindice DESC limit 1";
-																					
-																					$qeryvd =  pg_query($conn,$sql);
-																					
-																					@$cuantosi = @pg_num_rows(qeryvd);
-																					
-																					if ($cuantosi> 0)
-																						{
-																							
-																							$iddocumentozip = pg_fetch_assoc($qeryvd);
-																							
-																							$eliddoc = $iddocumentozip['id_documento'];
-																							
-																							$iddocumentozip = $data[1];  //$iddocumentozip['id_documento'];
-																						}
-																				}
-																			else
-																				{
-																					if (trim($configdb[0]) == 'sqlsrv')
-																						{
-																							$sql  = "SELECT  id_documento FROM sgd_valorindice WHERE valor = '".$data[0]."'";
-																							
-																							$qeryvd =  sqlsrv_query($conn,$sql);
-																							
-																							while( $row = sqlsrv_fetch_array( $qeryvd, SQLSRV_FETCH_ASSOC ))
-																								{
-																									$iddocumentozip = $row['id_documento'];
-																									
-																									$eliddoc = $row['id_documento'];
-																								}
-																							if ($iddocumentozip > 0)
-																								{
-																									$iddocumentozip = $data[1];
-																								}
-																						}
-																				}
-																		}
-																	
-																	
-																	
-																	
-																	$eld = array();
-																	
-																	$eld[]['iddocumento'] = $eliddoc;
-																	
-																	$eld[]['invoice_number'] = $data[0];
-																	
-																	$eld[]['vehicle_number'] = $iddocumentozip; 
-																	
-																	$vidbusqueda[] = $eld;
-																	
-																	
-																}// fin de las lineas a partir de 2
-=======
 																			if ($iddocumentozip > 0)
 																			{
 																				$iddocumentozip = $data[1];
@@ -25310,7 +25061,6 @@ if(isset($_REQUEST['otraoperation'])) {
 													{
 														echo json_encode((['status'=>'error','code'=>205,'message'=>'Does not contain any csv file']));
 														exit;
->>>>>>> 1.121
 														
 													}
 												}//fin del for de listado
@@ -26872,7 +26622,7 @@ if(isset($_REQUEST['otraoperation'])) {
 															
 															$local_file = $ruta_bodega.$labodega."/".$idimagen.'_.dat';   
 															
-															$server_file = $ruta_bodegaftp.$labodega.'/'.$idimagen.'_.dat';   echo $server_file;
+															$server_file = $ruta_bodegaftp.$labodega.'/'.$idimagen.'_.dat';   
 															
 															$handle = fopen($local_file, 'w');    
 															
@@ -26898,7 +26648,7 @@ if(isset($_REQUEST['otraoperation'])) {
 														{
 															$local_file = $ruta_bodega.$labodega."/".$idimagen.'_.dat';
 															
-															$server_file = $ruta_bodegasftp.$labodega.'/'.$idimagen.'_.dat';
+															$server_file = $ruta_bodegasftp.$labodega.'/'.$idimagen.'_.dat';   
 															
 															$sftp = new Net_SFTP($datoftp_server,$datoftp_port);
 															
@@ -27046,7 +26796,7 @@ if(isset($_REQUEST['otraoperation'])) {
 																{
 																	$local_file = $ruta_bodega.$labodega."/".$idimagen.'_.dat';
 																	
-																	$server_file = $ruta_bodegasftp.$labodega.'/'.$idimagen.'_.dat';
+																	$server_file = $ruta_bodegasftp.$labodega.'/'.$idimagen.'_.dat';  echo $server_file;
 																	
 																	$sftp = new Net_SFTP($datoftp_server,$datoftp_port);
 																	

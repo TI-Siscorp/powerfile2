@@ -97,31 +97,7 @@
 				{
 					$indicesexp = $permisos->listadoindices($iddocs[$i],$iddocs[$i]);
 					
-<<<<<<< visor_listado.blade.php
-					if ($indicesexp != '')
-						{
-							$indicesexp = explode("_;_",$indicesexp);
-							
-							$nombresindi = json_decode($indicesexp[0]);
-							
-							$valoresindi = json_decode($indicesexp[1]);
-							
-							$script = '';
-							
-							for ($f = 0; $f < count($nombresindi); $f++)
-								{
-									$script .= '<span class="indicesub"><strong>'.$nombresindi[$f].': </strong></span>'.$valoresindi[$f].', ';
-									
-								}
-							
-							$numimg = $permisos->contarimagenesxdoc($iddocs[$i]);
-							
-							//se busca el nombre del folder
-							
-							$nfolder = $permisos->dameidfolder_tabla($iddocs[$i]);
-							
-							//se verifica que tenga permiso para ver datos de la dependencia y tabla de los documentos filtrados
-=======
+
 					if ($indicesexp != '')
 						{
 					
@@ -142,33 +118,11 @@
 							$numimg = $permisos->contarimagenesxdoc($iddocs[$i]);
 							
 							//se busca el nombre del folder
->>>>>>> 1.39
-							
-<<<<<<< visor_listado.blade.php
 							$permiso_documentos = $permisos->permisofolder_tabladepuser($iddocs[$i]);
-=======
 							$nfolder = $permisos->dameidfolder_tabla($iddocs[$i]);
->>>>>>> 1.39
+
 							
-<<<<<<< visor_listado.blade.php
-							if ($permiso_documentos == true)
-								{
-									
-									//se busca el nombre el tipo docmumental.
-									$ntpdoc = $permisos->traerdocumental($idtpdocv[$i]);
-									
-									$scriptventanadoc .= '<br>';
-									$scriptventanadoc .= '<a href="javascript:;"  id="docexpediente_'.$iddocs[$i].'" class="actible" onclick="visor_dopc('.$iddocs[$i].')">'.$nfolder.'&nbsp;-&nbsp;'.$ntpdoc.'&nbsp;&nbsp;('.$numimg.'&nbsp;&nbsp;'.trans('principal.titimage').')</a><br>';
-									//- LOS INDICES Y SUS VALORES
-									$scriptventanadoc .= '<span>'.$script.'</span><br>';
-									$scriptventanadoc .= '<span><a href="javascript:;"  id="eldocumento_'.$iddocs[$i].'" class="actible" onclick="visor_dopc('.$iddocs[$i].')">'.trans("principal.titirdoc").'</span>';
-									$scriptventanadoc .= '<hr style="margin-top:1px !important;margin-bottom:1px !important;">';
-									
-								}
-						}
-					
-				}
-=======
+
 							//se verifica que tenga permiso para ver datos de la dependencia y tabla de los documentos filtrados
 								
 							$permiso_documentos = $permisos->permisofolder_tabladepuser($iddocs[$i]);
@@ -189,7 +143,7 @@
 								}
 					}			
 			}
->>>>>>> 1.39
+
 		}
 		
 		//llenamos los usuarios a los cuales se les puede enviar la notificacion del documento
