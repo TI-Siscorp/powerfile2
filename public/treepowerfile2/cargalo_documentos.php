@@ -10796,7 +10796,7 @@ if(isset($_REQUEST['otraoperation'])) {
 																
 																$local_file = $ruta_bodega.$labodega."/".$campo2['id_imagendocum'].'_.dat';
 																
-																$server_file = $ruta_bodegaftp.$campo2['id_imagendocum'].'_.dat';																
+																$server_file = $ruta_bodegaftp.$labodega."/".$campo2['id_imagendocum'].'_.dat';																
 																
 																if (ftp_get($conn_id, $local_file, $server_file, FTP_BINARY))
 																	{
@@ -10814,6 +10814,22 @@ if(isset($_REQUEST['otraoperation'])) {
 														// cerrar la conexi�n ftp
 														ftp_close($conn_id);
 													}
+												else
+													{
+														if ($modobodega == 'SFTP')
+															{
+																$local_file = $ruta_bodega.$labodega."/".$campo2['id_imagendocum'].'_.dat';
+																
+																$server_file = $ruta_bodegasftp.$labodega."/".$campo2['id_imagendocum'].'_.dat';	
+																
+																$sftp = new Net_SFTP($datoftp_server,$datoftp_port);
+																
+																if (!$sftp->login($datoftp_user, $datoftp_pass))
+																{}
+																
+																$sftp->get($server_file, $local_file);
+															}	
+													}	
 												
 												
 												@inFTP(@$campo2['id_imagendocum'].'_.'.$campo2['extension'],$ruta_bodega.$labodega,$ruta_temp,$kweyllave);
