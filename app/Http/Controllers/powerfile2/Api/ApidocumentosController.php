@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\powerfile2\Api;
-
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Input;
@@ -1403,6 +1402,22 @@ class ApidocumentosController extends Controller
 											}
 									}
 								
+									//se busca el nombre del tipo documental
+									
+								if ($driver != 'pgsql')
+									{
+										$dattpdocnom = DB::select('select nombre from '.$workspaceinput.'.sgd_tipodocumentales  where  id_tipodoc = '.$id_tipodoc);
+									}
+								else
+									{
+										if ($driver == 'pgsql')
+											{
+												$dattpdocnom= DB::select('select nombre from '.$workspaceinput.'.public.sgd_tipodocumentales  where  id_tipodoc = '.$id_tipodoc);
+											}
+									}
+									
+								$dattpdocnom = $dattpdocnom[0]->nombre;
+									
 								if (count($haydocumetn) == 0)
 									{
 										//se registran los datos
@@ -1462,44 +1477,57 @@ class ApidocumentosController extends Controller
 										$iddocumento= $ciddocum[$tregiddocum]->id_documento;
 											
 										//se registran los valores indices
-											
+										
+										$nomindicesb = array();
+										
 										for ( $i = 0 ; $i < $totalindices ; $i ++)
+										{
+											$valord = $valor[$i];
+										
+											//se buscan los nombres de los indices
+										
+											if ($i == 0)
 											{
-												$valord = $valor[$i];
-												
-												if ($i == 0)
-													{
-														$elvalorb = $valord;
-													}
-													if ($driver != 'pgsql')
-														{
-															DB::table($workspaceinput.'.sgd_valorindice')->insert(
-																	array(
-																			'id_documento'     	=>  $iddocumento,
-																			'id_indice'   		=>  $vidindices[$i],
-																			'valor' 			=>	$valord,
-																			'id_estado'			=> 	1,
-																			'created_at'		=> date("Y-m-d H:m:s")
-																	)
-																);
-														}	
-													else 
-														{
-															if ($driver == 'pgsql')
-																{
-																	DB::table($workspaceinput.'.public.sgd_valorindice')->insert(
-																				array(
-																						'id_documento'     	=>  $iddocumento,
-																						'id_indice'   		=>  $vidindices[$i],
-																						'valor' 			=>	$valord,
-																						'id_estado'			=> 	1,
-																						'created_at'		=> date("Y-m-d H:m:s")
-																				)
-																			);
-																}
-														}
-													
+												$elvalorb = $valord;
 											}
+											if ($driver != 'pgsql')
+											{
+										
+												$lnomindices = DB::select('select nombre from '.$workspaceinput.'.sgd_indices  where id_indice = '.$vidindices[$i]);
+										
+												$nomindicesb[] =  $lnomindices[0]->nombre;
+										
+												DB::table($workspaceinput.'.sgd_valorindice')->insert(
+														array(
+																'id_documento'     	=>  $iddocumento,
+																'id_indice'   		=>  $vidindices[$i],
+																'valor' 			=>	$valord,
+																'id_estado'			=> 	1,
+																'created_at'		=> date("Y-m-d H:m:s")
+														)
+														);
+											}
+											else
+											{
+												if ($driver == 'pgsql')
+												{
+													$lnomindices = DB::select('select nombre from '.$workspaceinput.'.public.sgd_indices  where id_indice = '.$vidindices[$i]);
+										
+													$nomindicesb[] =  $lnomindices[0]->nombre;
+										
+													DB::table($workspaceinput.'.public.sgd_valorindice')->insert(
+															array(
+																	'id_documento'     	=>  $iddocumento,
+																	'id_indice'   		=>  $vidindices[$i],
+																	'valor' 			=>	$valord,
+																	'id_estado'			=> 	1,
+																	'created_at'		=> date("Y-m-d H:m:s")
+															)
+															);
+												}
+											}
+										
+										}
 										
 											$id_documento = $iddocumento;  
 											
@@ -1884,6 +1912,46 @@ class ApidocumentosController extends Controller
 													
 															if ($idimagen > 0)
 																{
+																	
+																	if ($driver != 'pgsql')
+																	{
+																		DB::table($workspaceinput.'.sgd_search')->insert(   //$id_expediente $id_tipodoc $id_usuario $id_tabla $id_folder $vidindices  $valor
+																				array(
+																						'id_documento'     	=>  $id_documento,
+																						'id_expediente'   			=>  $id_expediente,
+																						'id_tipodocumental' 		=>	$dattpdocnom,
+																						'id_node' 		=> 	$id_folder,
+																						'id_tabla' =>	$id_tabla,
+																						'id_indices' => implode(",",$nomindicesb),
+																						'nombre' =>  $nombrear,
+																						'search' =>  implode(",",$valor),
+																						'usuarios' => $id_usuario,
+																						'id_estado'			=> 	1,
+																						'created_at'			=> date("Y-m-d H:m:s")
+																				)
+																				);
+																	}
+																	else
+																	{
+																		if ($driver == 'pgsql')
+																		{
+																			DB::table($workspaceinput.'.public.sgd_search')->insert(
+																					array(
+																							'id_documento'     	=>  $id_documento,
+																							'id_expediente'   			=>  $id_expediente,
+																							'id_tipodocumental' 		=>	$dattpdocnom,
+																							'id_node' 		=> 	$id_folder,
+																							'id_tabla' =>	$id_tabla,
+																							'id_indices' => implode(",",$nomindicesb),
+																							'nombre' =>  $nombrear,
+																							'search' =>  implode(",",$valor),
+																							'usuarios' => $id_usuario,
+																							'id_estado'			=> 	1,
+																							'created_at'			=> date("Y-m-d H:m:s")
+																					)
+																					);
+																		}
+																	}
 																		
 																	if($request->hasFile('imgarh'))
 																		{
@@ -2679,10 +2747,6 @@ class ApidocumentosController extends Controller
 												$valord = $valor[$i];
 												
 												//se buscan los nombres de los indices
-												
-												
-												
-												
 												
 												if ($i == 0)
 													{
@@ -3812,7 +3876,7 @@ class ApidocumentosController extends Controller
 								
 							}
 							
-							//dd($configdb.'/treepowerfile2/cargalo_documentos.php?otraoperation=load_csv&configdb='.$configdb.'&workspace='.$workspaceinput.'&nombreb='.$nombreb.'&id_tabla='.$id_tabla.'&idusuario='.$usuarios.'&id_folder='.$id_folder.'&conbusqueda='.$conbusqueda);
+							//dd($configdb.'/treepowerfile2/cargalo_documentos.php?otraoperation=loadfile_jlt&configdb='.$configdb.'&workspace='.$workspaceinput.'&nombreb='.$nombreb.'&id_tabla='.$id_tabla.'&idusuario='.$usuarios.'&id_folder='.$id_folder.'&id_tpdoc='.$id_tpdoc);
 							
 							
 							$page = file_get_contents($configdb.'/treepowerfile2/cargalo_documentos.php?otraoperation=loadfile_jlt&configdb='.$configdb.'&workspace='.$workspaceinput.'&nombreb='.$nombreb.'&id_tabla='.$id_tabla.'&idusuario='.$usuarios.'&id_folder='.$id_folder.'&id_tpdoc='.$id_tpdoc);
